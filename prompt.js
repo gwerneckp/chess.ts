@@ -25,9 +25,5 @@ function showBoard() {
 }
 showBoard();
 console.log(game.board[1][1].color);
-game.move(1, 1, 1, 3);
-showBoard();
-game.move(1, 1, 1, 3);
-showBoard();
-game.move(6, 7, 5, 5);
+game.move(3, 1, 3, 3);
 showBoard();
