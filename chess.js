@@ -22,10 +22,10 @@ var Chess = /** @class */ (function () {
             [
                 new Rook("white"),
                 new Knight("white"),
-                new Pawn("white"),
-                new Pawn("white"),
+                new Bishop("white"),
+                new Queen("white"),
                 new King("white"),
-                new Pawn("white"),
+                new Bishop("white"),
                 new Knight("white"),
                 new Rook("white")
             ],
@@ -92,10 +92,10 @@ var Chess = /** @class */ (function () {
             [
                 new Rook("black"),
                 new Knight("black"),
-                new Pawn("black"),
-                new Pawn("black"),
+                new Bishop("black"),
+                new Queen("black"),
                 new King("black"),
-                new Pawn("black"),
+                new Bishop("black"),
                 new Knight("black"),
                 new Rook("black")
             ]
@@ -105,6 +105,9 @@ var Chess = /** @class */ (function () {
         if (this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)) {
             this.board[y2][x2] = this.board[y1][x1];
             this.board[y1][x1] = new Empty;
+        }
+        else {
+            console.log("Cannot move piece on x: " + x1 + " y: " + y1 + " to x: " + x2 + " y: " + y2);
         }
     };
     return Chess;
@@ -130,8 +133,8 @@ var Empty = /** @class */ (function () {
         this.notation = ".";
         this.consoleColor = "\x1b[32m";
     }
-    Empty.prototype.canMove = function (x1, y1) {
-        console.log("You cannot move this piece. Position: x:", +x1 + " y:", +y1);
+    Empty.prototype.canMove = function () {
+        return false;
     };
     return Empty;
 }());
@@ -232,7 +235,6 @@ var Rook = /** @class */ (function (_super) {
             if ((y2 - y1) > 0) {
                 //check all cases before target
                 for (var i = 1; i < Math.abs(y2 - y1); i++) {
-                    console.log(i);
                     if (board[y1 + i][x2].type != "empty") {
                         return false;
                     }
@@ -256,14 +258,12 @@ var Rook = /** @class */ (function (_super) {
                 }
             }
         }
-        //0,4,7,4
         //vertical
         if (y1 == y2) {
             //if positive
             if ((x2 - x1) > 0) {
                 //check all cases before target
                 for (var i = 1; i < Math.abs(x2 - x1); i++) {
-                    console.log(i);
                     if (board[y2][x1 + i].type != "empty") {
                         return false;
                     }
@@ -290,6 +290,214 @@ var Rook = /** @class */ (function (_super) {
         return false;
     };
     return Rook;
+}(Piece));
+var Bishop = /** @class */ (function (_super) {
+    __extends(Bishop, _super);
+    //constructor
+    function Bishop(clr) {
+        var _this = _super.call(this, clr) || this;
+        _this.type = "bishop";
+        _this.notation = "b";
+        return _this;
+    }
+    //defining canMove method
+    Bishop.prototype.canMove = function (x1, y1, x2, y2, board) {
+        if (Math.abs(x2 - x1) == Math.abs(y2 - y1)) {
+            //right side
+            if ((x2 - x1) > 0) {
+                //up
+                if ((y2 - y1) > 0) {
+                    //check all cases before target
+                    for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                        if (board[y1 + i][x1 + i].type != "empty") {
+                            return false;
+                        }
+                    }
+                    //checks if case is empty or if there is an opponent piece
+                    if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                        return true;
+                    }
+                }
+                //down
+                if ((y2 - y1) < 0) {
+                    //check all cases before target
+                    for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                        if (board[y1 - i][x1 + i].type != "empty") {
+                            return false;
+                        }
+                    }
+                    //checks if case is empty or if there is an opponent piece
+                    if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                        return true;
+                    }
+                }
+            }
+            //left side
+            if ((x2 - x1) < 0) {
+                //up
+                if ((y2 - y1) > 0) {
+                    //check all cases before target
+                    for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                        if (board[y1 + i][x1 - i].type != "empty") {
+                            return false;
+                        }
+                    }
+                    //checks if case is empty or if there is an opponent piece
+                    if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                        return true;
+                    }
+                }
+                //down
+                if ((y2 - y1) < 0) {
+                    //check all cases before target
+                    for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                        if (board[y1 - i][x1 - i].type != "empty") {
+                            return false;
+                        }
+                    }
+                    //checks if case is empty or if there is an opponent piece
+                    if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    };
+    return Bishop;
+}(Piece));
+var Queen = /** @class */ (function (_super) {
+    __extends(Queen, _super);
+    //constructor
+    function Queen(clr) {
+        var _this = _super.call(this, clr) || this;
+        _this.type = "queen";
+        _this.notation = "q";
+        return _this;
+    }
+    // defining canMove method
+    Queen.prototype.canMove = function (x1, y1, x2, y2, board) {
+        if (Math.abs(x2 - x1) == Math.abs(y2 - y1)) {
+            //right side diagonal
+            if ((x2 - x1) > 0) {
+                //up
+                if ((y2 - y1) > 0) {
+                    //check all cases before target
+                    for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                        if (board[y1 + i][x1 + i].type != "empty") {
+                            return false;
+                        }
+                    }
+                    //checks if case is empty or if there is an opponent piece
+                    if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                        return true;
+                    }
+                }
+                //down
+                if ((y2 - y1) < 0) {
+                    //check all cases before target
+                    for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                        if (board[y1 - i][x1 + i].type != "empty") {
+                            return false;
+                        }
+                    }
+                    //checks if case is empty or if there is an opponent piece
+                    if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                        return true;
+                    }
+                }
+            }
+            //left side diagonal
+            if ((x2 - x1) < 0) {
+                //up
+                if ((y2 - y1) > 0) {
+                    //check all cases before target
+                    for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                        if (board[y1 + i][x1 - i].type != "empty") {
+                            return false;
+                        }
+                    }
+                    //checks if case is empty or if there is an opponent piece
+                    if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                        return true;
+                    }
+                }
+                //down
+                if ((y2 - y1) < 0) {
+                    //check all cases before target
+                    for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                        if (board[y1 - i][x1 - i].type != "empty") {
+                            return false;
+                        }
+                    }
+                    //checks if case is empty or if there is an opponent piece
+                    if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                        return true;
+                    }
+                }
+            }
+        }
+        //horizontal
+        if (x1 == x2) {
+            //if positive
+            if ((y2 - y1) > 0) {
+                //check all cases before target
+                for (var i = 1; i < Math.abs(y2 - y1); i++) {
+                    if (board[y1 + i][x2].type != "empty") {
+                        return false;
+                    }
+                }
+                //checks if case is empty or if there is an opponent piece
+                if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                    return true;
+                }
+            }
+            //if negative
+            if ((y2 - y1) < 0) {
+                //check all cases before target
+                for (var i = 1; i < Math.abs(y2 - y1); i++) {
+                    if (board[y1 - i][x2].type != "empty") {
+                        return false;
+                    }
+                }
+                //checks if case is empty or if there is an opponent piece
+                if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                    return true;
+                }
+            }
+        }
+        //vertical
+        if (y1 == y2) {
+            //if positive
+            if ((x2 - x1) > 0) {
+                //check all cases before target
+                for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                    if (board[y2][x1 + i].type != "empty") {
+                        return false;
+                    }
+                }
+                //checks if case is empty or if there is an opponent piece
+                if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                    return true;
+                }
+            }
+            //if negative
+            if ((x2 - x1) < 0) {
+                //check all cases before target
+                for (var i = 1; i < Math.abs(x2 - x1); i++) {
+                    if (board[y2][x1 - i].type != "empty") {
+                        return false;
+                    }
+                }
+                //checks if case is empty or if there is an opponent piece
+                if (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    return Queen;
 }(Piece));
 var King = /** @class */ (function (_super) {
     __extends(King, _super);

@@ -22,8 +22,20 @@ function showBoard() {
         board += " ";
     }
     console.log(board);
+    console.log("\n");
 }
 showBoard();
-console.log(game.board[1][1].color);
 game.move(3, 1, 3, 3);
+showBoard();
+game.move(4, 1, 4, 2);
+showBoard();
+game.move(2, 0, 5, 3);
+showBoard();
+game.move(6, 7, 5, 5);
+showBoard();
+game.move(4, 2, 4, 3);
+showBoard();
+game.move(4, 3, 4, 4);
+showBoard();
+game.move(4, 4, 5, 5);
 showBoard();

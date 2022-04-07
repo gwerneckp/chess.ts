@@ -5,10 +5,10 @@ export class Chess{
 [
       new Rook("white"),
       new Knight("white"),
-      new Pawn("white"),
-      new Pawn("white"),
+      new Bishop("white"),
+      new Queen("white"),
       new King("white"),
-      new Pawn("white"),
+      new Bishop("white"),
       new Knight("white"),
       new Rook("white")
 ],
@@ -75,10 +75,10 @@ export class Chess{
 [
       new Rook("black"),
       new Knight("black"),
-      new Pawn("black"),
-      new Pawn("black"),
+      new Bishop("black"),
+      new Queen("black"),
       new King("black"),
-      new Pawn("black"),
+      new Bishop("black"),
       new Knight("black"),
       new Rook("black")
 ]
@@ -89,6 +89,8 @@ export class Chess{
     if(this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)){
       this.board[y2][x2] = this.board[y1][x1]
       this.board[y1][x1] = new Empty
+    } else{
+      console.log("Cannot move piece on x: "+x1+" y: "+y1+" to x: "+x2+" y: "+y2)
     }
   }
 
@@ -127,8 +129,8 @@ class Empty{
     this.notation = "."
     this.consoleColor = "\x1b[32m"
   }
-  canMove(x1:number, y1:number){
-    console.log("You cannot move this piece. Position: x:",+x1+" y:",+y1)
+  canMove(){
+    return false
   }
 }
 
@@ -225,7 +227,6 @@ class Rook extends Piece{
       if((y2-y1)>0){
 //check all cases before target
         for(let i=1;i<Math.abs(y2-y1);i++){
-          console.log(i)
           if(board[y1+i][x2].type!="empty"){
             return false
           }
@@ -250,14 +251,12 @@ class Rook extends Piece{
       }
     }
 
-//0,4,7,4
 //vertical
     if(y1==y2){
 //if positive
       if((x2-x1)>0){
 //check all cases before target
         for(let i=1;i<Math.abs(x2-x1);i++){
-          console.log(i)
           if(board[y2][x1+i].type!="empty"){
             return false
           }
@@ -285,6 +284,217 @@ class Rook extends Piece{
   }
 }
 
+class Bishop extends Piece{
+//constructor
+  constructor(clr: string){
+    super(clr)
+    this.type = "bishop"
+    this.notation = "b"
+  }
+
+//defining canMove method
+  canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
+    if(Math.abs(x2-x1)==Math.abs(y2-y1)){
+//right side
+      if((x2-x1)>0){
+//up
+        if((y2-y1)>0){
+//check all cases before target
+          for(let i=1;i<Math.abs(x2-x1);i++){
+            if(board[y1+i][x1+i].type!="empty"){
+              return false
+            }
+          }
+//checks if case is empty or if there is an opponent piece
+          if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+            return true
+          }
+        }
+//down
+        if((y2-y1)<0){
+//check all cases before target
+          for(let i=1;i<Math.abs(x2-x1);i++){
+            if(board[y1-i][x1+i].type!="empty"){
+              return false
+            }
+          }
+//checks if case is empty or if there is an opponent piece
+          if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+            return true
+          }
+        }
+      }
+
+
+//left side
+      if((x2-x1)<0){
+//up
+        if((y2-y1)>0){
+//check all cases before target
+          for(let i=1;i<Math.abs(x2-x1);i++){
+            if(board[y1+i][x1-i].type!="empty"){
+              return false
+            }
+          }
+//checks if case is empty or if there is an opponent piece
+          if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+            return true
+          }
+        }
+//down
+        if((y2-y1)<0){
+//check all cases before target
+          for(let i=1;i<Math.abs(x2-x1);i++){
+            if(board[y1-i][x1-i].type!="empty"){
+              return false
+            }
+          }
+//checks if case is empty or if there is an opponent piece
+          if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+            return true
+          }
+        }
+      }
+    }
+    return false
+  }
+}
+
+class Queen extends Piece{
+  //constructor
+    constructor(clr: string){
+      super(clr)
+      this.type = "queen"
+      this.notation = "q"
+    }
+  // defining canMove method
+    canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
+      if(Math.abs(x2-x1)==Math.abs(y2-y1)){
+//right side diagonal
+        if((x2-x1)>0){
+//up
+          if((y2-y1)>0){
+//check all cases before target
+            for(let i=1;i<Math.abs(x2-x1);i++){
+              if(board[y1+i][x1+i].type!="empty"){
+                return false
+              }
+            }
+//checks if case is empty or if there is an opponent piece
+            if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+              return true
+            }
+          }
+//down
+          if((y2-y1)<0){
+//check all cases before target
+            for(let i=1;i<Math.abs(x2-x1);i++){
+              if(board[y1-i][x1+i].type!="empty"){
+                return false
+              }
+            }
+//checks if case is empty or if there is an opponent piece
+            if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+              return true
+            }
+          }
+        }
+
+
+//left side diagonal
+        if((x2-x1)<0){
+//up
+          if((y2-y1)>0){
+//check all cases before target
+            for(let i=1;i<Math.abs(x2-x1);i++){
+              if(board[y1+i][x1-i].type!="empty"){
+                return false
+              }
+            }
+//checks if case is empty or if there is an opponent piece
+            if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+              return true
+            }
+          }
+//down
+          if((y2-y1)<0){
+//check all cases before target
+            for(let i=1;i<Math.abs(x2-x1);i++){
+              if(board[y1-i][x1-i].type!="empty"){
+                return false
+              }
+            }
+//checks if case is empty or if there is an opponent piece
+            if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+              return true
+            }
+          }
+        }
+
+      }
+//horizontal
+      if(x1==x2){
+//if positive
+        if((y2-y1)>0){
+//check all cases before target
+          for(let i=1;i<Math.abs(y2-y1);i++){
+            if(board[y1+i][x2].type!="empty"){
+              return false
+            }
+          }
+//checks if case is empty or if there is an opponent piece
+          if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+            return true
+          }
+        }
+//if negative
+        if((y2-y1)<0){
+//check all cases before target
+          for(let i=1;i<Math.abs(y2-y1);i++){
+            if(board[y1-i][x2].type!="empty"){
+              return false
+            }
+          }
+//checks if case is empty or if there is an opponent piece
+          if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+            return true
+          }
+        }
+      }
+
+//vertical
+      if(y1==y2){
+//if positive
+        if((x2-x1)>0){
+//check all cases before target
+          for(let i=1;i<Math.abs(x2-x1);i++){
+            if(board[y2][x1+i].type!="empty"){
+              return false
+            }
+          }
+//checks if case is empty or if there is an opponent piece
+          if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+            return true
+          }
+        }
+//if negative
+        if((x2-x1)<0){
+//check all cases before target
+          for(let i=1;i<Math.abs(x2-x1);i++){
+            if(board[y2][x1-i].type!="empty"){
+              return false
+            }
+          }
+//checks if case is empty or if there is an opponent piece
+          if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
+            return true
+          }
+        }
+      }
+      return false
+    }
+}
+
 class King extends Piece{
   //constructor
     constructor(clr: string){
@@ -292,7 +502,6 @@ class King extends Piece{
       this.type = "king"
       this.notation = "k"
     }
-
   // defining canMove method
     canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
       if((x2==x1+1 || x2==x1-1 || y2==y1+1 || y2==y1-1)&&(board[y2][x2].type=="empty" || board[y2][x2].color != this.color)){
