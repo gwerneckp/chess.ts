@@ -1,5 +1,6 @@
 export class Chess{
-  board: any;
+  board: Array<object>;
+  turn: Array<string>
   constructor(){
     this.board = [
 [
@@ -83,14 +84,17 @@ export class Chess{
       new Rook("black")
 ]
     ]
+    this.turn = ["white", "black"]
   }
 
   move(x1:number, y1:number, x2:number, y2:number){
-    if(this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)){
+    if(this.board[y1][x1].color == this.turn[0] && this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)){
       this.board[y2][x2] = this.board[y1][x1]
       this.board[y1][x1] = new Empty
+      this.turn = [this.turn[1], this.turn[0]] 
+      return ("Moved "+this.board[y1][x1].type+" from x:"+x1+" y:"+y1+" to x:"+x2+" y:"+y2)
     } else{
-      console.log("Cannot move piece on x: "+x1+" y: "+y1+" to x: "+x2+" y: "+y2)
+      return("Cannot move piece on x: "+x1+" y: "+y1+" to x: "+x2+" y: "+y2)
     }
   }
 

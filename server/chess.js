@@ -100,14 +100,17 @@ var Chess = /** @class */ (function () {
                 new Rook("black")
             ]
         ];
+        this.turn = ["white", "black"];
     }
     Chess.prototype.move = function (x1, y1, x2, y2) {
-        if (this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)) {
+        if (this.board[y1][x1].color == this.turn[0] && this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)) {
             this.board[y2][x2] = this.board[y1][x1];
             this.board[y1][x1] = new Empty;
+            this.turn = [this.turn[1], this.turn[0]];
+            return ("Moved " + this.board[y1][x1].type + " from x:" + x1 + " y:" + y1 + " to x:" + x2 + " y:" + y2);
         }
         else {
-            console.log("Cannot move piece on x: " + x1 + " y: " + y1 + " to x: " + x2 + " y: " + y2);
+            return ("Cannot move piece on x: " + x1 + " y: " + y1 + " to x: " + x2 + " y: " + y2);
         }
     };
     return Chess;
