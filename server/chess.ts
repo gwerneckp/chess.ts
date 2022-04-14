@@ -1,3 +1,5 @@
+import { cloneDeep } from "lodash";
+
 export class Chess{
   board: Array<object>;
   turn: Array<string>
@@ -97,6 +99,13 @@ export class Chess{
     if(!this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)){
       return("Cannot move piece on x: "+x1+" y: "+y1+" to x: "+x2+" y: "+y2)
     }
+
+//check if move is outting yourself in check
+    if(this.inCheckAfterMove(x1,y1,x2,y2,this.board,this.turn)){
+      return("Moving piece on x: "+x1+" y: "+y1+" to x: "+x2+" y: "+y2+" leaves king in check!")
+    }
+
+
 //do this if didn't return till now
     this.board[y2][x2] = this.board[y1][x1]
     this.board[y1][x1] = new Empty
@@ -123,9 +132,19 @@ export class Chess{
     for(let i in opponentPiecesPos){
 //if piece can move to king's position, then king is in check
       if(board[opponentPiecesPos[i][0]][opponentPiecesPos[i][1]].canMove(opponentPiecesPos[i][1], opponentPiecesPos[i][0], myKingPos[1], myKingPos[0], board)){
-        console.log("In check")
+        console.log("king in check")
         return true
       }
+    }
+    return false
+  }
+
+  inCheckAfterMove(x1:number, y1:number, x2:number, y2:number, board:Array<object>, turn:Array<string>):boolean{
+    let newBoard:Array<object> = cloneDeep(board)
+    newBoard[y2][x2] = newBoard[y1][x1]
+    newBoard[y1][x1] = new Empty
+    if(this.inCheck(newBoard, turn)){
+      return true
     }
     return false
   }
@@ -531,13 +550,13 @@ class Queen extends Piece{
 }
 
 class King extends Piece{
-  //constructor
+//constructor
     constructor(clr: string){
       super(clr)
       this.type = "king"
       this.notation = "k"
     }
-  // defining canMove method
+// defining canMove method
     canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
       if((x2==x1+1 || x2==x1-1 || y2==y1+1 || y2==y1-1)&&(board[y2][x2].type=="empty" || board[y2][x2].color != this.color)){
         return true

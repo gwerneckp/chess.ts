@@ -16,7 +16,6 @@ io.on("connection", function (socket: Socket) {
     io.emit("game", game)
     socket.on("game", function(x1,y1,x2,y2){
         console.log(game.move(parseInt(x1),parseInt(y1),parseInt(x2),parseInt(y2)))
-        console.log(game.inCheck(game.board, game.turn))
         io.emit("game", game)
     })
 });

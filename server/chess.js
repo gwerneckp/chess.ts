@@ -16,6 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 exports.__esModule = true;
 exports.Chess = void 0;
+var lodash_1 = require("lodash");
 var Chess = /** @class */ (function () {
     function Chess() {
         this.board = [
@@ -112,6 +113,10 @@ var Chess = /** @class */ (function () {
         if (!this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)) {
             return ("Cannot move piece on x: " + x1 + " y: " + y1 + " to x: " + x2 + " y: " + y2);
         }
+        //check if move is outting yourself in check
+        if (this.inCheckAfterMove(x1, y1, x2, y2, this.board, this.turn)) {
+            return ("Moving piece on x: " + x1 + " y: " + y1 + " to x: " + x2 + " y: " + y2 + " leaves king in check!");
+        }
         //do this if didn't return till now
         this.board[y2][x2] = this.board[y1][x1];
         this.board[y1][x1] = new Empty;
@@ -136,9 +141,18 @@ var Chess = /** @class */ (function () {
         for (var i in opponentPiecesPos) {
             //if piece can move to king's position, then king is in check
             if (board[opponentPiecesPos[i][0]][opponentPiecesPos[i][1]].canMove(opponentPiecesPos[i][1], opponentPiecesPos[i][0], myKingPos[1], myKingPos[0], board)) {
-                console.log("In check");
+                console.log("king in check");
                 return true;
             }
+        }
+        return false;
+    };
+    Chess.prototype.inCheckAfterMove = function (x1, y1, x2, y2, board, turn) {
+        var newBoard = (0, lodash_1.cloneDeep)(board);
+        newBoard[y2][x2] = newBoard[y1][x1];
+        newBoard[y1][x1] = new Empty;
+        if (this.inCheck(newBoard, turn)) {
+            return true;
         }
         return false;
     };
