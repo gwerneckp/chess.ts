@@ -183,7 +183,7 @@ class Empty{
     this.notation = "."
     this.consoleColor = "\x1b[32m"
   }
-  canMove(){
+  canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
     return false
   }
 }
@@ -558,7 +558,7 @@ class King extends Piece{
     }
 // defining canMove method
     canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
-      if((x2==x1+1 || x2==x1-1 || y2==y1+1 || y2==y1-1)&&(board[y2][x2].type=="empty" || board[y2][x2].color != this.color)){
+      if((x2==x1+1 || x2==x1-1 || y2==y1+1 || y2==y1-1)&&(board[y2][x2].type=="empty" || board[y2][x2].color != this.color)&&Math.abs(x2-x1)<2&& Math.abs(y2-y1)<2){
         return true
       }
       return false

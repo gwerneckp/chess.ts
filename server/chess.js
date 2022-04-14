@@ -179,7 +179,7 @@ var Empty = /** @class */ (function () {
         this.notation = ".";
         this.consoleColor = "\x1b[32m";
     }
-    Empty.prototype.canMove = function () {
+    Empty.prototype.canMove = function (x1, y1, x2, y2, board) {
         return false;
     };
     return Empty;
@@ -556,7 +556,7 @@ var King = /** @class */ (function (_super) {
     }
     // defining canMove method
     King.prototype.canMove = function (x1, y1, x2, y2, board) {
-        if ((x2 == x1 + 1 || x2 == x1 - 1 || y2 == y1 + 1 || y2 == y1 - 1) && (board[y2][x2].type == "empty" || board[y2][x2].color != this.color)) {
+        if ((x2 == x1 + 1 || x2 == x1 - 1 || y2 == y1 + 1 || y2 == y1 - 1) && (board[y2][x2].type == "empty" || board[y2][x2].color != this.color) && Math.abs(x2 - x1) < 2 && Math.abs(y2 - y1) < 2) {
             return true;
         }
         return false;
