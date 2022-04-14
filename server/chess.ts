@@ -89,19 +89,46 @@ export class Chess{
 
   move(x1:number, y1:number, x2:number, y2:number){
     const pieceType: "string" = this.board[y1][x1].type
-    if(this.board[y1][x1].color == this.turn[0]){
-      if(this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)){
-      this.board[y2][x2] = this.board[y1][x1]
-      this.board[y1][x1] = new Empty
-      this.turn = [this.turn[1], this.turn[0]] 
-      return ("Moved "+pieceType+" from x:"+x1+" y:"+y1+" to x:"+x2+" y:"+y2)
-    } else{
+//if piece you are trying to move isn't of the same color of current turn
+    if(this.board[y1][x1].color != this.turn[0]){
+      return("Cannot move a "+this.board[y1][x1].color+" piece on "+this.turn[0]+"'s turn.")
+    }
+//checks if piece can *NOT* move 
+    if(!this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)){
       return("Cannot move piece on x: "+x1+" y: "+y1+" to x: "+x2+" y: "+y2)
     }
-  } else{
-    return("Cannot move a "+this.board[y1][x1].color+" piece on "+this.turn[0]+"'s turn.")
+//do this if didn't return till now
+    this.board[y2][x2] = this.board[y1][x1]
+    this.board[y1][x1] = new Empty
+    this.turn = [this.turn[1], this.turn[0]]
+    return ("Moved "+pieceType+" from x:"+x1+" y:"+y1+" to x:"+x2+" y:"+y2)
   }
-}
+
+  inCheck(board:Array<object>, turn:Array<string>):boolean{
+    let myKingPos:Array<number>
+    let opponentPiecesPos:Array<Array<number>> = []
+    for(let i in board){
+      for(let j in board[i]){
+//check if piece is of the opponent's color and save its position in array
+        if(board[i][j].color == turn[1]){
+          opponentPiecesPos.push([parseInt(i), parseInt(j)])
+        }
+//check if piece is king of the current turn's color and save its position
+        if(board[i][j].type == "king" && board[i][j].color == turn[0]){
+          myKingPos = [parseInt(i), parseInt(j)]
+        }
+      }
+    }
+
+    for(let i in opponentPiecesPos){
+//if piece can move to king's position, then king is in check
+      if(board[opponentPiecesPos[i][0]][opponentPiecesPos[i][1]].canMove(opponentPiecesPos[i][1], opponentPiecesPos[i][0], myKingPos[1], myKingPos[0], board)){
+        console.log("In check")
+        return true
+      }
+    }
+    return false
+  }
 }
 
 abstract class Piece{

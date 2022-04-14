@@ -9,7 +9,7 @@ var socket_io_client_1 = require("socket.io-client");
 var prompt_sync_1 = __importDefault(require("prompt-sync"));
 var prompt = (0, prompt_sync_1["default"])();
 // @ts-ignore 
-var socket = socket_io_client_1.io.connect('http://localhost:3000', { reconnect: true });
+var socket = socket_io_client_1.io.connect('http://localhost:3000', { reconnection: true });
 //defining showboard function
 function showBoard(board) {
     var letters = ["a", "b", "c", "d", "e", "f", "g", "h"];

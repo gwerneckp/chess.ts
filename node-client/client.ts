@@ -6,7 +6,7 @@ import promptSync from 'prompt-sync';
 const prompt = promptSync();
 
 // @ts-ignore 
-var socket = io.connect('http://localhost:3000', {reconnect: true});
+var socket = io.connect('http://localhost:3000', {reconnection: true});
 
 //defining showboard function
 function showBoard(board):string{
