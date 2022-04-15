@@ -97,6 +97,11 @@ export class Chess{
       return("Game Over! The "+this.turn[0]+" king is in checkmate!")
     }
 
+//checks if in stalamate
+    if(this.inStalemate(this.board, this.turn)){
+      return("Stalemate, "+this.turn[0]+" has no legal moves remaining, but is not in check. It's a draw!")
+    }
+
 //if piece you are trying to move isn't of the same color of current turn
     if(this.board[y1][x1].color != this.turn[0]){
       return("Cannot move a "+this.board[y1][x1].color+" piece on "+this.turn[0]+"'s turn.")
@@ -169,9 +174,34 @@ export class Chess{
 //two nested loops to iterate throught all pieces in board
             for(let k in board){
               for(let l in board[k]){
-//checks if any legal move can take king out of check
+//checks if any  move can take king out of check
                 if(board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board) && !this.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, turn)){
                   console.log("Moving piece on x: "+j+" y: "+i+" to x: "+l+" y: "+k+" takes king out of check!")
+                  return false
+                }
+              }
+            }
+          }
+        }
+      }
+      return true
+    }
+    return false
+  }
+
+  inStalemate(board:Array<object>, turn:Array<string>){
+//check if king is NOT in check
+    if(!this.inCheck(board, turn)){
+//two nested loops to iterate throught all pieces in board
+      for(let i in board){
+        for(let j in board[i]){
+          if(board[i][j].color == turn[0]){
+//two nested loops to iterate throught all pieces in board
+            for(let k in board){
+              for(let l in board[i]){
+//checks if piece can move and if king is not in check after move
+                if(board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board) && !this.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, turn)){
+                  console.log("Moving piece on x: "+j+" y: "+i+" to x: "+l+" y: "+k+" is possible!")
                   return false
                 }
               }
@@ -240,8 +270,8 @@ class Pawn extends Piece{
         if(y2==y1+1){
           return true
         }
-//moving 2 forward
-        if(y1==1 && y2==3){
+//moving 2 forwards
+        if(y1==1 && y2==3 && board[2][x2].type == "empty"){
           return true
         }
       }
@@ -261,7 +291,7 @@ class Pawn extends Piece{
           return true
         }
 //moving 2 forward
-        if(y1==6 && y2==4){
+        if(y1==6 && y2==4 && board[5][x2].type == "empty"){
           return true
         }
       }
