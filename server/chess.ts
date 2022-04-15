@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep, range } from "lodash";
 
 export class Chess{
   board: Array<object>;
@@ -91,6 +91,12 @@ export class Chess{
 
   move(x1:number, y1:number, x2:number, y2:number){
     const pieceType: "string" = this.board[y1][x1].type
+
+//checks if in checkmate
+    if(this.inCheckmate(this.board, this.turn)){
+      return("Game Over! The "+this.turn[0]+" king is in checkmate!")
+    }
+
 //if piece you are trying to move isn't of the same color of current turn
     if(this.board[y1][x1].color != this.turn[0]){
       return("Cannot move a "+this.board[y1][x1].color+" piece on "+this.turn[0]+"'s turn.")
@@ -132,7 +138,7 @@ export class Chess{
     for(let i in opponentPiecesPos){
 //if piece can move to king's position, then king is in check
       if(board[opponentPiecesPos[i][0]][opponentPiecesPos[i][1]].canMove(opponentPiecesPos[i][1], opponentPiecesPos[i][0], myKingPos[1], myKingPos[0], board)){
-        console.log("king in check")
+        console.log("The "+turn[0]+"'s king is in check")
         return true
       }
     }
@@ -140,10 +146,39 @@ export class Chess{
   }
 
   inCheckAfterMove(x1:number, y1:number, x2:number, y2:number, board:Array<object>, turn:Array<string>):boolean{
+//creates clone of board
     let newBoard:Array<object> = cloneDeep(board)
+//moves piece in cloned board
     newBoard[y2][x2] = newBoard[y1][x1]
     newBoard[y1][x1] = new Empty
+//if move puts king on check, return true
     if(this.inCheck(newBoard, turn)){
+      return true
+    }
+    return false
+  }
+
+  inCheckmate(board:Array<object>, turn:Array<string>):boolean{
+//check if king is in check
+    if(this.inCheck(board, turn)){
+//two nested loops to iterate throught all pieces in board
+      for(let i in board){
+        for(let j in board[i]){
+//if piece is of the same color of turn
+          if(board[i][j].color == turn[0]){
+//two nested loops to iterate throught all pieces in board
+            for(let k in board){
+              for(let l in board[k]){
+//checks if any legal move can take king out of check
+                if(board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board) && !this.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, turn)){
+                  console.log("Moving piece on x: "+j+" y: "+i+" to x: "+l+" y: "+k+" takes king out of check!")
+                  return false
+                }
+              }
+            }
+          }
+        }
+      }
       return true
     }
     return false
