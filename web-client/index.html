@@ -1,0 +1,40 @@
+<html>
+    <head><meta charset="UTF-8"></head>
+
+    <style>
+    .table {
+        border: 1px solid black;
+        width: 500px;
+        height: 500px;
+    }
+    td{
+        /* padding: 50px; */
+        background-color: rgb(248, 230, 191);
+    }
+    .responsive{
+        max-width:100%;
+        max-height:100%;
+    }
+
+    .center{
+        position: absolute;
+        top: 50%;
+        left: 50%; 
+        transform: translate(-50%, -50%);
+    }
+
+    .parent{
+        position: relative;
+    }    
+    </style>
+
+    <body class="parent">
+        <table class="responsive center" id="board-gui" style="background-color:black;">
+
+        </table>
+        
+    </body>
+    <script src="socket.io.js"></script>
+    <script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
+    <script type="module" src="client.js"></script>
+</html>
