@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -6,8 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //client.js
 const socket_io_client_1 = require("socket.io-client");
 //user input
-const prompt_sync_1 = __importDefault(require("prompt-sync"));
-const prompt = (0, prompt_sync_1.default)();
+const prompt_async_1 = __importDefault(require("prompt-async"));
 // @ts-ignore 
 var socket = socket_io_client_1.io.connect('http://localhost:3000', { reconnection: true });
 let sessionId;
@@ -115,15 +123,17 @@ function rightTurn(players, chess) {
     return false;
 }
 socket.on("game", function (players, chess) {
-    let move;
-    console.log("\n");
-    console.log(showBoard(players, chess));
-    console.log("\n");
-    console.log(showTurn(chess.turn));
-    if (rightTurn(players, chess)) {
-        const moveStr = prompt("next move: ");
-        move = notationToNumbers(moveStr);
-        console.log(move);
-        socket.emit("game", move[0], move[1], move[2], move[3]);
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        let move;
+        console.log("\n");
+        console.log(showBoard(players, chess));
+        console.log("\n");
+        console.log(showTurn(chess.turn));
+        if (rightTurn(players, chess)) {
+            prompt_async_1.default.start();
+            const moveStr = yield prompt_async_1.default.get("next move: ");
+            move = notationToNumbers(moveStr["next move: "]);
+            socket.emit("game", move[0], move[1], move[2], move[3]);
+        }
+    });
 });

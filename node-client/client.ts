@@ -2,8 +2,7 @@
 import { io, Socket } from "socket.io-client";
 
 //user input
-import promptSync from 'prompt-sync';
-const prompt = promptSync();
+import prompt from 'prompt-async';
 
 // @ts-ignore 
 var socket = io.connect('http://localhost:3000', {reconnection: true});
@@ -130,16 +129,16 @@ function rightTurn(players, chess):boolean{
   return false
 }
 
-socket.on("game", function (players, chess){
+socket.on("game", async function (players, chess){
     let move:Array<number>
     console.log("\n")
     console.log(showBoard(players, chess))
     console.log("\n")
     console.log(showTurn(chess.turn))
     if(rightTurn(players,chess)){
-      const moveStr:string = prompt("next move: ")
-      move = notationToNumbers(moveStr)
-      console.log(move)
+      prompt.start()
+      const moveStr:string = await prompt.get("next move: ")
+      move = notationToNumbers(moveStr["next move: "])
       socket.emit("game", move[0], move[1], move[2], move[3])
     }
 });
