@@ -1,6 +1,5 @@
 //socket.io and http modules
 import { createServer } from "http";
-import { remove } from "lodash";
 import { Server, Socket } from "socket.io";
 
 //importing chess game
@@ -85,6 +84,7 @@ io.on("connection", function (socket: Socket) {
     socket.on('disconnect', function(){
 //remove disconnected player from color and reassing poisition to spectator
         console.log(socket.id, "disconnected from", removeAndReassign(socket))
+        io.emit("game", players, game)
     })
 });
 

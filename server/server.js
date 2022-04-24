@@ -79,6 +79,7 @@ io.on("connection", function (socket) {
     socket.on('disconnect', function () {
         //remove disconnected player from color and reassing poisition to spectator
         console.log(socket.id, "disconnected from", removeAndReassign(socket));
+        io.emit("game", players, game);
     });
 });
 //create http server on port 3000    
