@@ -23,7 +23,22 @@ function showBoardWhite(board):string{
       boardPrint += "  "
   
       for(let j=0;j<board[i].length;j++){
-        line += board[i][j].consoleColor+board[i][j].notation+'\x1b[0m'
+        const clr:string = board[i][j].color
+        let consoleColor:string
+
+        if(clr == "white"){
+          consoleColor = "[37m"
+        }
+
+        if(clr == "black"){
+          consoleColor = "[33m"
+        }
+
+        if(board[i][j].type == "empty"){
+          consoleColor = "[32m"
+        }
+
+        line += '\x1b'+consoleColor+board[i][j].notation+'\x1b[0m'
         line += " "
       }
       boardPrint += line
@@ -52,7 +67,22 @@ function showBoardBlack(board):string{
     boardPrint += "  "
 
     for(let j = board[i].length-1; j>-1; j--){
-      line += board[i][j].consoleColor+board[i][j].notation+'\x1b[0m'
+      const clr:string = board[i][j].color
+      let consoleColor:string
+
+      if(clr == "white"){
+        consoleColor = "[37m"
+      }
+
+      if(clr == "black"){
+        consoleColor = "[33m"
+      }
+
+      if(board[i][j].type == "empty"){
+        consoleColor = "[32m"
+      }
+
+      line += '\x1b'+consoleColor+board[i][j].notation+'\x1b[0m'
       line += " "
     }
     boardPrint += line
@@ -137,8 +167,8 @@ socket.on("game", async function (players, chess){
     console.log(showTurn(chess.turn))
     if(rightTurn(players,chess)){
       prompt.start()
-      const moveStr:string = await prompt.get("next move: ")
-      move = notationToNumbers(moveStr["next move: "])
+      const moveStr:string = await prompt.get("next move")
+      move = notationToNumbers(moveStr["next move"])
       socket.emit("game", move[0], move[1], move[2], move[3])
     }
 });
