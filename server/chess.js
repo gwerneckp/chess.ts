@@ -207,20 +207,12 @@ class Piece {
     // constructor
     constructor(clr) {
         this.color = clr;
-        if (clr == "white") {
-            this.consoleColor = "\x1b[37m";
-        }
-        if (clr == "black") {
-            this.consoleColor = "\x1b[33m";
-        }
     }
 }
 class Empty {
     constructor() {
         this.type = "empty";
-        // this.notation = "□"
         this.notation = ".";
-        this.consoleColor = "\x1b[32m";
     }
     canMove(x1, y1, x2, y2, board) {
         return false;

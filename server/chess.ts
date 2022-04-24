@@ -220,19 +220,9 @@ abstract class Piece{
   type: string
   notation: string
   color: string
-  consoleColor: string
 // constructor
   constructor(clr:string){
     this.color = clr
-
-    if(clr == "white"){
-      this.consoleColor = "\x1b[37m"
-    }
-
-    if(clr == "black"){
-      this.consoleColor = "\x1b[33m"
-    }
-
   }
 //abstract method
   abstract canMove(x1: number, y1: number, x2: number, y2:number, board:Array<object>):boolean
@@ -241,12 +231,9 @@ abstract class Piece{
 class Empty{
   type: string
   notation: string
-  consoleColor: string
   constructor(){
     this.type = "empty"
-    // this.notation = "□"
     this.notation = "."
-    this.consoleColor = "\x1b[32m"
   }
   canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
     return false
