@@ -8,7 +8,7 @@ socket.on('connect', function(){
 
 function showBoardWhite(board):void{
     document.getElementById("board-gui").innerHTML = ""
-    for(let i=board.length-1;i>-1;i--){
+    for(let i=board.length-1;i>-1;i--){ 
       document.getElementById("board-gui").innerHTML += "<tr data-line='"+i+"' id='l"+i+"'></tr>"
       for(let j=0;j<board[i].length;j++){
         let color:String 
