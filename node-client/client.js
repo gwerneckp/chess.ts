@@ -129,6 +129,7 @@ function notationToNumbers(moveStr) {
     moveArr[1] = parseInt(arr[0][1]) - 1;
     moveArr[2] = letterToNumber(arr[1][0]);
     moveArr[3] = parseInt(arr[1][1]) - 1;
+    moveArr[4] = arr[2];
     return moveArr;
 }
 function rightTurn(players, chess) {
@@ -144,18 +145,16 @@ function rightTurn(players, chess) {
     }
     return false;
 }
-socket.on("game", function (players, chess) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let move;
-        console.log("\n");
-        console.log(showBoard(players, chess));
-        console.log("\n");
-        console.log(showTurn(chess.turn));
-        if (rightTurn(players, chess)) {
-            prompt_async_1.default.start();
-            const moveStr = yield prompt_async_1.default.get("next move");
-            move = notationToNumbers(moveStr["next move"]);
-            socket.emit("game", move[0], move[1], move[2], move[3]);
-        }
-    });
-});
+socket.on("game", (players, chess) => __awaiter(void 0, void 0, void 0, function* () {
+    let move;
+    console.log("\n");
+    console.log(showBoard(players, chess));
+    console.log("\n");
+    console.log(showTurn(chess.turn));
+    if (rightTurn(players, chess)) {
+        prompt_async_1.default.start();
+        const moveStr = yield prompt_async_1.default.get("next move");
+        move = notationToNumbers(moveStr["next move"]);
+        socket.emit("game", move[0], move[1], move[2], move[3], move[4]);
+    }
+}));

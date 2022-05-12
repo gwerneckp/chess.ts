@@ -142,6 +142,7 @@ function notationToNumbers(moveStr):Array<number>{
   moveArr[1] = parseInt(arr[0][1])-1
   moveArr[2] = letterToNumber(arr[1][0])
   moveArr[3] = parseInt(arr[1][1])-1
+  moveArr[4] = arr[2]
   return moveArr
 }
 
@@ -159,7 +160,7 @@ function rightTurn(players, chess):boolean{
   return false
 }
 
-socket.on("game", async function (players, chess){
+socket.on("game", async (players, chess) => {
     let move:Array<number>
     console.log("\n")
     console.log(showBoard(players, chess))
@@ -169,6 +170,6 @@ socket.on("game", async function (players, chess){
       prompt.start()
       const moveStr:string = await prompt.get("next move")
       move = notationToNumbers(moveStr["next move"])
-      socket.emit("game", move[0], move[1], move[2], move[3])
+      socket.emit("game", move[0], move[1], move[2], move[3], move[4])
     }
 });

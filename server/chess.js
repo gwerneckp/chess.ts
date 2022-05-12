@@ -180,7 +180,29 @@ class Chess {
             //do stuff
         }
         if (moveType === 'promote') {
-            //do stuff
+            board[y1][x1].changeHasMoved();
+            switch (promote) {
+                case undefined:
+                    board[y2][x2] = new Queen(board[y1][x1].color);
+                    break;
+                case 'q':
+                    board[y2][x2] = new Queen(board[y1][x1].color);
+                    break;
+                case 'b':
+                    board[y2][x2] = new Bishop(board[y1][x1].color);
+                    break;
+                case 'n':
+                    board[y2][x2] = new Knight(board[y1][x1].color);
+                    break;
+                case 'r':
+                    board[y2][x2] = new Rook(board[y1][x1].color);
+                    break;
+                default:
+                    board[y2][x2] = new Queen(board[y1][x1].color);
+                    break;
+            }
+            board[y1][x1] = new Empty;
+            return board;
         }
     }
     inCheckmate(board, turn) {
@@ -271,6 +293,9 @@ class Pawn extends Piece {
             if (x1 == x2 && board[y2][x2].type == "empty") {
                 //moving 1 forward
                 if (y2 == y1 + 1) {
+                    if (y2 == 7) {
+                        return 'promote';
+                    }
                     return 'regular';
                 }
                 //moving 2 forwards
@@ -281,6 +306,9 @@ class Pawn extends Piece {
             //eating diagonally
             if ((x2 == x1 + 1 || x2 == x1 - 1) && y2 == y1 + 1 && board[y2][x2].type != "empty") {
                 if (board[y2][x2].color != "white") {
+                    if (y2 == 7) {
+                        return 'promote';
+                    }
                     return 'regular';
                 }
             }
@@ -291,6 +319,9 @@ class Pawn extends Piece {
             if (x1 == x2 && board[y2][x2].type == "empty") {
                 //moving 1 forward
                 if (y2 == y1 - 1) {
+                    if (y2 == 0) {
+                        return 'promote';
+                    }
                     return 'regular';
                 }
                 //moving 2 forward
@@ -301,6 +332,9 @@ class Pawn extends Piece {
             //eating diagonally
             if ((x2 == x1 + 1 || x2 == x1 - 1) && y2 == y1 - 1 && board[y2][x2].type != "empty") {
                 if (board[y2][x2].color != "black") {
+                    if (y2 == 0) {
+                        return 'promote';
+                    }
                     return 'regular';
                 }
             }

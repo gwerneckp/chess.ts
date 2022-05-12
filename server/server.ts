@@ -65,23 +65,23 @@ function rightTurn(socket):boolean{
 }
 
 //emit game board on connection
-io.on("connection", function (socket: Socket) {
+io.on("connection", (socket: Socket) => {
 //assign color to new connection
     console.log(socket.id,"joined as",assingColor(socket))
 //emit game board to new connection
     io.emit("game", players, game)
 //on move from player
-    socket.on("game", function(x1,y1,x2,y2){
+    socket.on("game", (x1,y1,x2,y2, promote?) => {
 //checks if move is from the right player
         if(rightTurn(socket)){
 //tries to play move
-            console.log(game.move(parseInt(x1),parseInt(y1),parseInt(x2),parseInt(y2)))
+            console.log(game.move(parseInt(x1),parseInt(y1),parseInt(x2),parseInt(y2), promote))
 //emit game board to all
             io.emit("game", players, game)
         }
     })
 //on disconnection
-    socket.on('disconnect', function(){
+    socket.on('disconnect', () => {
 //remove disconnected player from color and reassing poisition to spectator
         console.log(socket.id, "disconnected from", removeAndReassign(socket))
         io.emit("game", players, game)
