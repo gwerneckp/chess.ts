@@ -282,10 +282,12 @@ class Empty{
 
 class Pawn extends Piece{
 //constructor
+  canBeTakenEnPassant:boolean
   constructor(clr: string){
     super(clr)
     this.type = "pawn"
     this.notation = "p"
+    this.canBeTakenEnPassant = false
   }
 // defining canMove method
   canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
@@ -455,7 +457,7 @@ class Bishop extends Piece{
 //checks if case is empty or if there is an opponent piece
           if(board[y2][x2].type=="empty" || board[y2][x2].color != this.color){
             return 'regular'
-          }
+          } 
         }
 //down
         if((y2-y1)<0){

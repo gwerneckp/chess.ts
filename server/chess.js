@@ -257,11 +257,11 @@ class Empty {
     }
 }
 class Pawn extends Piece {
-    //constructor
     constructor(clr) {
         super(clr);
         this.type = "pawn";
         this.notation = "p";
+        this.canBeTakenEnPassant = false;
     }
     // defining canMove method
     canMove(x1, y1, x2, y2, board) {

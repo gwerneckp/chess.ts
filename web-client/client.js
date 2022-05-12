@@ -1,6 +1,6 @@
 //client.js
 //@ts-ignore
-var socket = io.connect('192.168.0.135:3000', { transports: ['websocket', 'polling', 'flashsocket'] }, { reconnection: true });
+var socket = io.connect('localhost:3000', { transports: ['websocket', 'polling', 'flashsocket'] }, { reconnection: true });
 let sessionId;
 socket.on('connect', function () {
     sessionId = socket.id;
