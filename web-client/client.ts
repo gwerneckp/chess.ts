@@ -79,6 +79,33 @@ function getClickListenerReady(board, role):void{
             }
             if(selectedSquareId != ''){
                 let squareFrom = document.getElementById(selectedSquareId)
+                if(board[squareFrom.dataset.y][squareFrom.dataset.x].type == 'pawn'
+                && ((parseInt(square.dataset.y) == 7 && role == 'white')|| (parseInt(square.dataset.y) == 0) && role == 'black')
+                && ((((parseInt(square.dataset.x) == parseInt(squareFrom.dataset.x) + 1) || (parseInt(square.dataset.x) == parseInt(squareFrom.dataset.x) - 1)) && board[square.dataset.y][square.dataset.x].color != role)
+                || ((parseInt(square.dataset.x) == parseInt(squareFrom.dataset.x)) && board[square.dataset.y][square.dataset.x].type == "empty"))){
+                        if(document.getElementById("dropdown-menu")){
+                            const dropdown = document.getElementById("dropdown-menu")
+                            dropdown.remove()
+                        }
+                        square.innerHTML += '<div id="dropdown-menu" class="promote-menu">'+
+                        '<img class="promote-option white" id="queen" src="./assets/pieces/' + role + '_queen.svg" data-notation="q"></img>'+
+                        '<img class="promote-option black" id="knight" src="./assets/pieces/' + role + '_knight.svg" data-notation="n"></img>'+
+                        '<img class="promote-option white" id="bishop" src="./assets/pieces/' + role + '_bishop.svg" data-notation="b"></img>'+
+                        '<img class="promote-option black" id="rook" src="./assets/pieces/' + role + '_rook.svg" data-notation="r"></img>'+
+                        '</div>'
+                        let promoteOptionList = document.getElementsByClassName("promote-option")
+                        for (let i in promoteOptionList) {
+                            let promoteOption = promoteOptionList[i]
+                            if(typeof(promoteOption) != "object"){
+                                continue
+                            }
+                            document.getElementById(promoteOption.id).addEventListener("click", () => {
+                                console.log(squareFrom.dataset.x, squareFrom.dataset.y, square.dataset.x, square.dataset.y, (promoteOption as HTMLElement).dataset.notation);
+                                socket.emit("game", squareFrom.dataset.x, squareFrom.dataset.y, square.dataset.x, square.dataset.y, (promoteOption as HTMLElement).dataset.notation);
+                            })
+                        }
+                        return
+                }
                 console.log(squareFrom.dataset.x, squareFrom.dataset.y, square.dataset.x, square.dataset.y)
                 socket.emit("game", squareFrom.dataset.x, squareFrom.dataset.y, square.dataset.x, square.dataset.y)
                 return

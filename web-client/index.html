@@ -2,6 +2,11 @@
     <head><meta charset="UTF-8"></head>
 
     <style>
+    :root{
+        --light-brown: rgb(248, 230, 191);
+        --dark-brown: rgb(146, 120, 62);
+        --grey: rgb(158, 152, 137);
+    }
     .table {
         border: 1px solid black;
         width: 500px;
@@ -9,11 +14,11 @@
 
     }
     .white{
-        background-color: rgb(248, 230, 191);
+        background-color: var(--light-brown);
     }
     
     .black{
-        background-color:rgb(146, 120, 62);
+        background-color:var(--dark-brown);
     }
 
     .responsive{
@@ -39,13 +44,34 @@
     body{
         background-color:rgb(141, 141, 141);
     }
+    .promote-menu {
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        background-color: var(--grey);
+        border-radius: 25px;
+        padding: 7.5;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.35);
+    }
+    .promote-option{
+        border-color: black;
+        width: 100px;
+        height: 100px;
+        margin: 7.5px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.35);
+    }
+
+    .promote-option:hover{
+        background-color: var(--grey);
+    }
     </style>
 
     <body class="parent">
         <div class="responsive center">
         <table id="board-gui" style="background-color:black;"><td><h1 style="color: ffffff">Connecting to server...</h1></td></table>
         <div id="role"></div>
-        </div>        
+        </div>       
     </body>
     <script src="socket.io.js"></script>
     <script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
