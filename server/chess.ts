@@ -1,6 +1,7 @@
-import { cloneDeep, range } from "lodash";
+import { cloneDeep } from "lodash";
 
 export class Chess{
+  history: Array<Array<object>>
   board: Array<object>;
   turn: Array<string>
   constructor(){
@@ -87,6 +88,8 @@ export class Chess{
 ]
     ]
     this.turn = ["white", "black"]
+    this.history = []
+    this.history.push(cloneDeep(this.board))
   }
 
   move(x1:number, y1:number, x2:number, y2:number, promote?:string){
@@ -120,6 +123,7 @@ export class Chess{
 //do this if didn't return till now
     this.board = this.changePieceLocation(this.board, x1, y1, x2, y2, moveType, promote)
     this.turn = [this.turn[1], this.turn[0]]
+    this.history.push(cloneDeep(this.board))
     return ("Moved "+pieceType+" from x:"+x1+" y:"+y1+" to x:"+x2+" y:"+y2)
   }
 

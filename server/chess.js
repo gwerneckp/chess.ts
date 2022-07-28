@@ -87,6 +87,8 @@ class Chess {
             ]
         ];
         this.turn = ["white", "black"];
+        this.history = [];
+        this.history.push((0, lodash_1.cloneDeep)(this.board));
     }
     move(x1, y1, x2, y2, promote) {
         const pieceType = this.board[y1][x1].type;
@@ -114,6 +116,7 @@ class Chess {
         //do this if didn't return till now
         this.board = this.changePieceLocation(this.board, x1, y1, x2, y2, moveType, promote);
         this.turn = [this.turn[1], this.turn[0]];
+        this.history.push((0, lodash_1.cloneDeep)(this.board));
         return ("Moved " + pieceType + " from x:" + x1 + " y:" + y1 + " to x:" + x2 + " y:" + y2);
     }
     inCheck(board, turn) {
