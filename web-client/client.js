@@ -78,7 +78,7 @@ function getClickListenerReady(board, role) {
                 let squareFrom = document.getElementById(selectedSquareId);
                 if (board[squareFrom.dataset.y][squareFrom.dataset.x].type == 'pawn'
                     && ((parseInt(square.dataset.y) == 7 && role == 'white') || (parseInt(square.dataset.y) == 0) && role == 'black')
-                    && ((((parseInt(square.dataset.x) == parseInt(squareFrom.dataset.x) + 1) || (parseInt(square.dataset.x) == parseInt(squareFrom.dataset.x) - 1)) && board[square.dataset.y][square.dataset.x].color != role)
+                    && ((((parseInt(square.dataset.x) == parseInt(squareFrom.dataset.x) + 1) || (parseInt(square.dataset.x) == parseInt(squareFrom.dataset.x) - 1)) && board[square.dataset.y][square.dataset.x].color != role && board[square.dataset.y][square.dataset.x].type != 'empty')
                         || ((parseInt(square.dataset.x) == parseInt(squareFrom.dataset.x)) && board[square.dataset.y][square.dataset.x].type == "empty"))) {
                     if (document.getElementById("dropdown-menu")) {
                         const dropdown = document.getElementById("dropdown-menu");
