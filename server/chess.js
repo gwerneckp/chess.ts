@@ -2,38 +2,45 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chess = void 0;
 const lodash_1 = require("lodash");
+class Names {
+}
+// colors
+Names.WHITE = 'white';
+Names.BLACK = 'black';
+// types
+Names.PAWN = 'pawn';
+Names.ROOK = 'rook';
+Names.BISHOP = 'bishop';
+Names.KNIGHT = 'knight';
+Names.KING = 'king';
+Names.QUEEN = 'queen';
+// move types
+Names.DEFAULT = 'default';
+Names.ILLEGAL = 'illegal';
+Names.PROMOTION = 'promotion';
+Names.PASSANT = 'passant';
 class Chess {
     constructor() {
         this.board = [
             [
-                new Rook("white"),
-                new Knight("white"),
-                new Bishop("white"),
-                new Queen("white"),
-                new King("white"),
-                new Bishop("white"),
-                new Knight("white"),
-                new Rook("white")
+                new Rook(Names.WHITE),
+                new Knight(Names.WHITE),
+                new Bishop(Names.WHITE),
+                new Queen(Names.WHITE),
+                new King(Names.WHITE),
+                new Bishop(Names.WHITE),
+                new Knight(Names.WHITE),
+                new Rook(Names.WHITE)
             ],
             [
-                new Pawn("white"),
-                new Pawn("white"),
-                new Pawn("white"),
-                new Pawn("white"),
-                new Pawn("white"),
-                new Pawn("white"),
-                new Pawn("white"),
-                new Pawn("white")
-            ],
-            [
-                new Empty,
-                new Empty,
-                new Empty,
-                new Empty,
-                new Empty,
-                new Empty,
-                new Empty,
-                new Empty
+                new Pawn(Names.WHITE),
+                new Pawn(Names.WHITE),
+                new Pawn(Names.WHITE),
+                new Pawn(Names.WHITE),
+                new Pawn(Names.WHITE),
+                new Pawn(Names.WHITE),
+                new Pawn(Names.WHITE),
+                new Pawn(Names.WHITE)
             ],
             [
                 new Empty,
@@ -66,27 +73,37 @@ class Chess {
                 new Empty
             ],
             [
-                new Pawn("black"),
-                new Pawn("black"),
-                new Pawn("black"),
-                new Pawn("black"),
-                new Pawn("black"),
-                new Pawn("black"),
-                new Pawn("black"),
-                new Pawn("black")
+                new Empty,
+                new Empty,
+                new Empty,
+                new Empty,
+                new Empty,
+                new Empty,
+                new Empty,
+                new Empty
             ],
             [
-                new Rook("black"),
-                new Knight("black"),
-                new Bishop("black"),
-                new Queen("black"),
-                new King("black"),
-                new Bishop("black"),
-                new Knight("black"),
-                new Rook("black")
+                new Pawn(Names.BLACK),
+                new Pawn(Names.BLACK),
+                new Pawn(Names.BLACK),
+                new Pawn(Names.BLACK),
+                new Pawn(Names.BLACK),
+                new Pawn(Names.BLACK),
+                new Pawn(Names.BLACK),
+                new Pawn(Names.BLACK)
+            ],
+            [
+                new Rook(Names.BLACK),
+                new Knight(Names.BLACK),
+                new Bishop(Names.BLACK),
+                new Queen(Names.BLACK),
+                new King(Names.BLACK),
+                new Bishop(Names.BLACK),
+                new Knight(Names.BLACK),
+                new Rook(Names.BLACK)
             ]
         ];
-        this.turn = ["white", "black"];
+        this.turn = [Names.WHITE, Names.BLACK];
         this.history = [];
         this.history.push((0, lodash_1.cloneDeep)(this.board));
     }
@@ -291,7 +308,7 @@ class Pawn extends Piece {
     // defining canMove method
     canMove(x1, y1, x2, y2, board) {
         //for white
-        if (this.color == "white") {
+        if (this.color == Names.WHITE) {
             //moving forward
             if (x1 == x2 && board[y2][x2].type == "empty") {
                 //moving 1 forward
@@ -308,7 +325,7 @@ class Pawn extends Piece {
             }
             //eating diagonally
             if ((x2 == x1 + 1 || x2 == x1 - 1) && y2 == y1 + 1 && board[y2][x2].type != "empty") {
-                if (board[y2][x2].color != "white") {
+                if (board[y2][x2].color != Names.WHITE) {
                     if (y2 == 7) {
                         return 'promote';
                     }
@@ -317,7 +334,7 @@ class Pawn extends Piece {
             }
         }
         //for black
-        if (this.color == "black") {
+        if (this.color == Names.BLACK) {
             //moving forward
             if (x1 == x2 && board[y2][x2].type == "empty") {
                 //moving 1 forward
@@ -334,7 +351,7 @@ class Pawn extends Piece {
             }
             //eating diagonally
             if ((x2 == x1 + 1 || x2 == x1 - 1) && y2 == y1 - 1 && board[y2][x2].type != "empty") {
-                if (board[y2][x2].color != "black") {
+                if (board[y2][x2].color != Names.BLACK) {
                     if (y2 == 0) {
                         return 'promote';
                     }

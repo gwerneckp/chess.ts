@@ -1,5 +1,25 @@
 import { cloneDeep } from "lodash";
 
+class Names{
+  // colors
+  static WHITE: string = 'white'
+  static BLACK: string = 'black'
+  
+  // types
+  static PAWN: string = 'pawn'
+  static ROOK: string = 'rook'
+  static BISHOP: string = 'bishop'
+  static KNIGHT: string = 'knight'
+  static KING: string = 'king'
+  static QUEEN: string = 'queen'
+
+  // move types
+  static DEFAULT: string = 'default'
+  static ILLEGAL: string = 'illegal'
+  static PROMOTION: string = 'promotion'
+  static PASSANT: string = 'passant'
+}
+
 export class Chess{
   history: Array<Array<object>>
   board: Array<object>;
@@ -7,34 +27,24 @@ export class Chess{
   constructor(){
     this.board = [
 [
-      new Rook("white"),
-      new Knight("white"),
-      new Bishop("white"),
-      new Queen("white"),
-      new King("white"),
-      new Bishop("white"),
-      new Knight("white"),
-      new Rook("white")
+      new Rook(Names.WHITE),
+      new Knight(Names.WHITE),
+      new Bishop(Names.WHITE),
+      new Queen(Names.WHITE),
+      new King(Names.WHITE),
+      new Bishop(Names.WHITE),
+      new Knight(Names.WHITE),
+      new Rook(Names.WHITE)
 ],
 [
-      new Pawn("white"),
-      new Pawn("white"),
-      new Pawn("white"),
-      new Pawn("white"),
-      new Pawn("white"),
-      new Pawn("white"),
-      new Pawn("white"),
-      new Pawn("white")
-],
-[
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty
+      new Pawn(Names.WHITE),
+      new Pawn(Names.WHITE),
+      new Pawn(Names.WHITE),
+      new Pawn(Names.WHITE),
+      new Pawn(Names.WHITE),
+      new Pawn(Names.WHITE),
+      new Pawn(Names.WHITE),
+      new Pawn(Names.WHITE)
 ],
 [
       new Empty,
@@ -67,27 +77,37 @@ export class Chess{
       new Empty
 ],
 [
-      new Pawn("black"),
-      new Pawn("black"),
-      new Pawn("black"),
-      new Pawn("black"),
-      new Pawn("black"),
-      new Pawn("black"),
-      new Pawn("black"),
-      new Pawn("black")
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty
 ],
 [
-      new Rook("black"),
-      new Knight("black"),
-      new Bishop("black"),
-      new Queen("black"),
-      new King("black"),
-      new Bishop("black"),
-      new Knight("black"),
-      new Rook("black")
+      new Pawn(Names.BLACK),
+      new Pawn(Names.BLACK),
+      new Pawn(Names.BLACK),
+      new Pawn(Names.BLACK),
+      new Pawn(Names.BLACK),
+      new Pawn(Names.BLACK),
+      new Pawn(Names.BLACK),
+      new Pawn(Names.BLACK)
+],
+[
+      new Rook(Names.BLACK),
+      new Knight(Names.BLACK),
+      new Bishop(Names.BLACK),
+      new Queen(Names.BLACK),
+      new King(Names.BLACK),
+      new Bishop(Names.BLACK),
+      new Knight(Names.BLACK),
+      new Rook(Names.BLACK)
 ]
     ]
-    this.turn = ["white", "black"]
+    this.turn = [Names.WHITE, Names.BLACK]
     this.history = []
     this.history.push(cloneDeep(this.board))
   }
@@ -318,7 +338,7 @@ class Pawn extends Piece{
 // defining canMove method
   canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
 //for white
-    if(this.color=="white"){
+    if(this.color==Names.WHITE){
 //moving forward
       if(x1==x2 && board[y2][x2].type == "empty"){
 //moving 1 forward
@@ -335,7 +355,7 @@ class Pawn extends Piece{
       }
 //eating diagonally
       if((x2 == x1+1 || x2 == x1-1) && y2 == y1+1 && board[y2][x2].type != "empty"){
-        if(board[y2][x2].color != "white"){
+        if(board[y2][x2].color != Names.WHITE){
           if(y2 == 7){
             return 'promote'
           }
@@ -344,7 +364,7 @@ class Pawn extends Piece{
       }
     }
 //for black
-    if(this.color=="black"){
+    if(this.color==Names.BLACK){
 //moving forward
       if(x1==x2 && board[y2][x2].type == "empty"){
 //moving 1 forward
@@ -361,7 +381,7 @@ class Pawn extends Piece{
       }
 //eating diagonally
       if((x2 == x1+1 || x2 == x1-1) && y2 == y1-1 && board[y2][x2].type != "empty"){
-        if(board[y2][x2].color != "black"){
+        if(board[y2][x2].color != Names.BLACK){
           if(y2 == 0){
             return 'promote'
           }
