@@ -1,0 +1,16 @@
+{
+  "name": "chess.ts",
+  "version": "1.0.0",
+  "description": "Server-side chess engine running on Node.js with Socket.io",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "author": "Gabriel Werneck Paiva",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "socket.io": "^4.5.3"
+  }
+}
