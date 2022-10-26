@@ -1,0 +1,15 @@
+{
+  "name": "chess.ts_cli",
+  "version": "1.0.0",
+  "description": "Chess.ts CLI node client",
+  "main": "client.js",
+  "scripts": {
+    "test": "node client.js"
+  },
+  "author": "Gabriel Werneck Paiva",
+  "license": "ISC",
+  "dependencies": {
+    "prompt-async": "^0.9.9",
+    "socket.io-client": "^4.5.3"
+  }
+}
