@@ -1,24 +1,52 @@
 import { cloneDeep } from "lodash";
 
-class Names{
+interface ChessMoves{
+  DEFAULT: string,
+  ILLEGAL: string,
+  PROMOTION: string,
+  PASSANT: string
+}
+
+interface ChessPieces{
+  EMPTY: string,
+  PAWN: string,
+  ROOK: string,
+  BISHOP: string
+  KNIGHT: string
+  KING: string
+  QUEEN: string
+}
+
+interface ChessColors{
+  WHITE: string,
+  BLACK: string
+}
+
+class Terms{
   // colors
-  static WHITE: string = 'white'
-  static BLACK: string = 'black'
+  static Colors: ChessColors = {
+    WHITE: 'white',
+    BLACK: 'black'
+  }
   
   // types
-  static EMPTY:string = 'empty'
-  static PAWN: string = 'pawn'
-  static ROOK: string = 'rook'
-  static BISHOP: string = 'bishop'
-  static KNIGHT: string = 'knight'
-  static KING: string = 'king'
-  static QUEEN: string = 'queen'
+  static Pieces: ChessPieces = {
+    EMPTY : 'empty',
+    PAWN: 'pawn',
+    ROOK: 'rook',
+    BISHOP: 'bishop',
+    KNIGHT: 'knight',
+    KING: 'king',
+    QUEEN : 'queen',
+  }
 
   // move types
-  static DEFAULT: string = 'default'
-  static ILLEGAL: string = 'illegal'
-  static PROMOTION: string = 'promotion'
-  static PASSANT: string = 'passant'
+  static Moves: ChessMoves = {
+    DEFAULT: 'default',
+    ILLEGAL: 'illegal',
+    PROMOTION: 'promotion',
+    PASSANT: 'passant',
+  }
 }
 
 export class Chess{
@@ -28,34 +56,24 @@ export class Chess{
   constructor(){
     this.board = [
 [
-      new Rook(Names.WHITE),
-      new Knight(Names.WHITE),
-      new Bishop(Names.WHITE),
-      new Queen(Names.WHITE),
-      new King(Names.WHITE),
-      new Bishop(Names.WHITE),
-      new Knight(Names.WHITE),
-      new Rook(Names.WHITE)
+      new Rook(Terms.Colors.WHITE),
+      new Knight(Terms.Colors.WHITE),
+      new Bishop(Terms.Colors.WHITE),
+      new Queen(Terms.Colors.WHITE),
+      new King(Terms.Colors.WHITE),
+      new Bishop(Terms.Colors.WHITE),
+      new Knight(Terms.Colors.WHITE),
+      new Rook(Terms.Colors.WHITE)
 ],
 [
-      new Pawn(Names.WHITE),
-      new Pawn(Names.WHITE),
-      new Pawn(Names.WHITE),
-      new Pawn(Names.WHITE),
-      new Pawn(Names.WHITE),
-      new Pawn(Names.WHITE),
-      new Pawn(Names.WHITE),
-      new Pawn(Names.WHITE)
-],
-[
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty,
-      new Empty
+      new Pawn(Terms.Colors.WHITE),
+      new Pawn(Terms.Colors.WHITE),
+      new Pawn(Terms.Colors.WHITE),
+      new Pawn(Terms.Colors.WHITE),
+      new Pawn(Terms.Colors.WHITE),
+      new Pawn(Terms.Colors.WHITE),
+      new Pawn(Terms.Colors.WHITE),
+      new Pawn(Terms.Colors.WHITE)
 ],
 [
       new Empty,
@@ -88,27 +106,37 @@ export class Chess{
       new Empty
 ],
 [
-      new Pawn(Names.BLACK),
-      new Pawn(Names.BLACK),
-      new Pawn(Names.BLACK),
-      new Pawn(Names.BLACK),
-      new Pawn(Names.BLACK),
-      new Pawn(Names.BLACK),
-      new Pawn(Names.BLACK),
-      new Pawn(Names.BLACK)
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty,
+      new Empty
 ],
 [
-      new Rook(Names.BLACK),
-      new Knight(Names.BLACK),
-      new Bishop(Names.BLACK),
-      new Queen(Names.BLACK),
-      new King(Names.BLACK),
-      new Bishop(Names.BLACK),
-      new Knight(Names.BLACK),
-      new Rook(Names.BLACK)
+      new Pawn(Terms.Colors.BLACK),
+      new Pawn(Terms.Colors.BLACK),
+      new Pawn(Terms.Colors.BLACK),
+      new Pawn(Terms.Colors.BLACK),
+      new Pawn(Terms.Colors.BLACK),
+      new Pawn(Terms.Colors.BLACK),
+      new Pawn(Terms.Colors.BLACK),
+      new Pawn(Terms.Colors.BLACK)
+],
+[
+      new Rook(Terms.Colors.BLACK),
+      new Knight(Terms.Colors.BLACK),
+      new Bishop(Terms.Colors.BLACK),
+      new Queen(Terms.Colors.BLACK),
+      new King(Terms.Colors.BLACK),
+      new Bishop(Terms.Colors.BLACK),
+      new Knight(Terms.Colors.BLACK),
+      new Rook(Terms.Colors.BLACK)
 ]
     ]
-    this.turn = [Names.WHITE, Names.BLACK]
+    this.turn = [Terms.Colors.WHITE, Terms.Colors.BLACK]
     this.history = []
     this.history.push(cloneDeep(this.board))
   }
@@ -123,7 +151,7 @@ export class Chess{
 
 //checks if in stalamate
     if(this.inStalemate(this.board, this.turn)){
-      return("Stalemate, "+this.turn[0]+" has no legal moves remaining, but is not in check. It's a draw!")
+      return("Stalemate, "+this.turn[0]+" has no legal Moves remaining, but is not in check. It's a draw!")
     }
 
 //if piece you are trying to move isn't of the same color of current turn
@@ -132,7 +160,7 @@ export class Chess{
     }
 //checks if piece can *NOT* move 
     let moveType:string = this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)
-    if(moveType === Names.ILLEGAL){
+    if(moveType === Terms.Moves.ILLEGAL){
       return("Cannot move piece on x: "+x1+" y: "+y1+" to x: "+x2+" y: "+y2)
     }
 
@@ -158,7 +186,7 @@ export class Chess{
           opponentPiecesPos.push([parseInt(i), parseInt(j)])
         }
 //check if piece is king of the current turn's color and save its position
-        if(board[i][j].type == "king" && board[i][j].color == turn[0]){
+        if(board[i][j].type == Terms.Pieces.KING && board[i][j].color == turn[0]){
           myKingPos = [parseInt(i), parseInt(j)]
         }
       }
@@ -166,7 +194,7 @@ export class Chess{
 
     for(let i in opponentPiecesPos){
 //if piece can move to king's position, then king is in check
-      if(board[opponentPiecesPos[i][0]][opponentPiecesPos[i][1]].canMove(opponentPiecesPos[i][1], opponentPiecesPos[i][0], myKingPos[1], myKingPos[0], board) !== Names.ILLEGAL){
+      if(board[opponentPiecesPos[i][0]][opponentPiecesPos[i][1]].canMove(opponentPiecesPos[i][1], opponentPiecesPos[i][0], myKingPos[1], myKingPos[0], board) !== Terms.Moves.ILLEGAL){
         console.log("The "+turn[0]+"'s king is in check")
         return true
       }
@@ -177,7 +205,7 @@ export class Chess{
   inCheckAfterMove(x1:number, y1:number, x2:number, y2:number, board:Array<object>, moveType:string, turn:Array<string>, promote?):boolean{
 //creates clone of board
     let newBoard:Array<object> = cloneDeep(board)
-//moves piece in cloned board
+//Moves piece in cloned board
     newBoard = this.changePieceLocation(newBoard, x1, y1, x2, y2, moveType, promote)
 //if move puts king on check, return true
     if(this.inCheck(newBoard, turn)){
@@ -187,7 +215,7 @@ export class Chess{
   }
 
   changePieceLocation(board:Array<object>, x1:number, y1:number, x2:number, y2:number, moveType:string, promote?:string):Array<object>{
-    if(moveType === Names.DEFAULT){
+    if(moveType === Terms.Moves.DEFAULT){
       board[y1][x1].changeHasMoved()
       board[y2][x2] = board[y1][x1]
       board[y1][x1] = new Empty
@@ -211,10 +239,10 @@ export class Chess{
       board[y1][0] = new Empty
       return board
     }
-    if(moveType === 'en passant'){
+    if(moveType === Terms.Moves.PASSANT){
       //do stuff
     }
-    if(moveType === Names.PROMOTION){
+    if(moveType === Terms.Moves.PROMOTION){
       board[y1][x1].changeHasMoved()
       switch (promote) {
         case undefined:
@@ -254,7 +282,7 @@ export class Chess{
               for(let l in board[k]){
 //checks if any  move can take king out of check
                 let canMove = board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board)
-                if(canMove !== Names.ILLEGAL && !this.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, canMove, turn)){
+                if(canMove !== Terms.Moves.ILLEGAL && !this.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, canMove, turn)){
                   console.log("Moving piece on x: "+j+" y: "+i+" to x: "+l+" y: "+k+" takes king out of check!")
                   return false
                 }
@@ -280,7 +308,7 @@ export class Chess{
               for(let l in board[i]){
 //checks if piece can move and if king is not in check after move
                 let canMove = board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board)
-                if(board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board) !== Names.ILLEGAL && !this.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, canMove, turn)){
+                if(board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board) !== Terms.Moves.ILLEGAL && !this.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, canMove, turn)){
                   console.log("Moving piece on x: "+j+" y: "+i+" to x: "+l+" y: "+k+" is possible!")
                   return false
                 }
@@ -319,11 +347,11 @@ class Empty{
   type: string
   notation: string
   constructor(){
-    this.type = Names.EMPTY
+    this.type = Terms.Pieces.EMPTY
     this.notation = "."
   }
   canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
-    return Names.ILLEGAL
+    return Terms.Moves.ILLEGAL
   }
 }
 
@@ -332,65 +360,65 @@ class Pawn extends Piece{
   canBeTakenEnPassant:boolean
   constructor(clr: string){
     super(clr)
-    this.type = Names.PAWN
+    this.type = Terms.Pieces.PAWN
     this.notation = "p"
     this.canBeTakenEnPassant = false
   }
 // defining canMove method
   canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
 //for white
-    if(this.color==Names.WHITE){
+    if(this.color==Terms.Colors.WHITE){
 //moving forward
-      if(x1==x2 && board[y2][x2].type == Names.EMPTY){
+      if(x1==x2 && board[y2][x2].type == Terms.Pieces.EMPTY){
 //moving 1 forward
         if(y2==y1+1){
           if(y2 == 7){
-            return Names.PROMOTION
+            return Terms.Moves.PROMOTION
           }
-          return Names.DEFAULT
+          return Terms.Moves.DEFAULT
         }
 //moving 2 forwards
-        if(y1==1 && y2==3 && board[2][x2].type == Names.EMPTY){
-          return Names.DEFAULT
+        if(y1==1 && y2==3 && board[2][x2].type == Terms.Pieces.EMPTY){
+          return Terms.Moves.DEFAULT
         }
       }
 //eating diagonally
-      if((x2 == x1+1 || x2 == x1-1) && y2 == y1+1 && board[y2][x2].type != Names.EMPTY){
-        if(board[y2][x2].color != Names.WHITE){
+      if((x2 == x1+1 || x2 == x1-1) && y2 == y1+1 && board[y2][x2].type != Terms.Pieces.EMPTY){
+        if(board[y2][x2].color != Terms.Colors.WHITE){
           if(y2 == 7){
-            return Names.PROMOTION
+            return Terms.Moves.PROMOTION
           }
-          return Names.DEFAULT
+          return Terms.Moves.DEFAULT
         }
       }
     }
 //for black
-    if(this.color==Names.BLACK){
+    if(this.color==Terms.Colors.BLACK){
 //moving forward
-      if(x1==x2 && board[y2][x2].type == Names.EMPTY){
+      if(x1==x2 && board[y2][x2].type == Terms.Pieces.EMPTY){
 //moving 1 forward
         if(y2==y1-1){
           if(y2 == 0){
-            return Names.PROMOTION
+            return Terms.Moves.PROMOTION
           }
-          return Names.DEFAULT
+          return Terms.Moves.DEFAULT
         }
 //moving 2 forward
-        if(y1==6 && y2==4 && board[5][x2].type == Names.EMPTY){
-          return Names.DEFAULT
+        if(y1==6 && y2==4 && board[5][x2].type == Terms.Pieces.EMPTY){
+          return Terms.Moves.DEFAULT
         }
       }
 //eating diagonally
-      if((x2 == x1+1 || x2 == x1-1) && y2 == y1-1 && board[y2][x2].type != Names.EMPTY){
-        if(board[y2][x2].color != Names.BLACK){
+      if((x2 == x1+1 || x2 == x1-1) && y2 == y1-1 && board[y2][x2].type != Terms.Pieces.EMPTY){
+        if(board[y2][x2].color != Terms.Colors.BLACK){
           if(y2 == 0){
-            return Names.PROMOTION
+            return Terms.Moves.PROMOTION
           }
-          return Names.DEFAULT
+          return Terms.Moves.DEFAULT
         }
       }
     }
-    return Names.ILLEGAL
+    return Terms.Moves.ILLEGAL
   }
 }
 
@@ -398,24 +426,24 @@ class Knight extends Piece{
 //constructor
   constructor(clr: string){
     super(clr)
-    this.type = Names.KNIGHT
+    this.type = Terms.Pieces.KNIGHT
     this.notation = "n"
   }
 
 //defining canMove method
   canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
-    if(board[y2][x2].type == Names.EMPTY || board[y2][x2].color != this.color){
+    if(board[y2][x2].type == Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
     //first rectangle
       if(Math.abs(x1-x2)==2 && Math.abs(y1-y2)==1){
-        return Names.DEFAULT
+        return Terms.Moves.DEFAULT
       }
     //second rectangle
       if(Math.abs(y1-y2)==2 && Math.abs(x1-x2)==1){
-        return Names.DEFAULT
+        return Terms.Moves.DEFAULT
       }
-      return Names.ILLEGAL
+      return Terms.Moves.ILLEGAL
     }
-    return Names.ILLEGAL
+    return Terms.Moves.ILLEGAL
   }
 }
 
@@ -423,7 +451,7 @@ class Rook extends Piece{
 //constructor
   constructor(clr: string){
     super(clr)
-    this.type = Names.ROOK
+    this.type = Terms.Pieces.ROOK
     this.notation = "r"
   }
 
@@ -435,26 +463,26 @@ class Rook extends Piece{
       if((y2-y1)>0){
 //check all cases before target
         for(let i=1;i<Math.abs(y2-y1);i++){
-          if(board[y1+i][x2].type!=Names.EMPTY){
-            return Names.ILLEGAL
+          if(board[y1+i][x2].type!=Terms.Pieces.EMPTY){
+            return Terms.Moves.ILLEGAL
           }
         }
 //checks if case is empty or if there is an opponent piece
-        if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-          return Names.DEFAULT
+        if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+          return Terms.Moves.DEFAULT
         }
       }
 //if negative
       if((y2-y1)<0){
 //check all cases before target
         for(let i=1;i<Math.abs(y2-y1);i++){
-          if(board[y1-i][x2].type!=Names.EMPTY){
-            return Names.ILLEGAL
+          if(board[y1-i][x2].type!=Terms.Pieces.EMPTY){
+            return Terms.Moves.ILLEGAL
           }
         }
 //checks if case is empty or if there is an opponent piece
-        if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-          return Names.DEFAULT
+        if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+          return Terms.Moves.DEFAULT
         }
       }
     }
@@ -465,30 +493,30 @@ class Rook extends Piece{
       if((x2-x1)>0){
 //check all cases before target
         for(let i=1;i<Math.abs(x2-x1);i++){
-          if(board[y2][x1+i].type!=Names.EMPTY){
-            return Names.ILLEGAL
+          if(board[y2][x1+i].type!=Terms.Pieces.EMPTY){
+            return Terms.Moves.ILLEGAL
           }
         }
 //checks if case is empty or if there is an opponent piece
-        if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-          return Names.DEFAULT
+        if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+          return Terms.Moves.DEFAULT
         }
       }
 //if negative
       if((x2-x1)<0){
 //check all cases before target
         for(let i=1;i<Math.abs(x2-x1);i++){
-          if(board[y2][x1-i].type!=Names.EMPTY){
-            return Names.ILLEGAL
+          if(board[y2][x1-i].type!=Terms.Pieces.EMPTY){
+            return Terms.Moves.ILLEGAL
           }
         }
 //checks if case is empty or if there is an opponent piece
-        if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-          return Names.DEFAULT
+        if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+          return Terms.Moves.DEFAULT
         }
       }
     }
-    return Names.ILLEGAL
+    return Terms.Moves.ILLEGAL
   }
 }
 
@@ -496,7 +524,7 @@ class Bishop extends Piece{
 //constructor
   constructor(clr: string){
     super(clr)
-    this.type = Names.BISHOP
+    this.type = Terms.Pieces.BISHOP
     this.notation = "b"
   }
 
@@ -509,26 +537,26 @@ class Bishop extends Piece{
         if((y2-y1)>0){
 //check all cases before target
           for(let i=1;i<Math.abs(x2-x1);i++){
-            if(board[y1+i][x1+i].type!=Names.EMPTY){
-              return Names.ILLEGAL
+            if(board[y1+i][x1+i].type!=Terms.Pieces.EMPTY){
+              return Terms.Moves.ILLEGAL
             }
           }
 //checks if case is empty or if there is an opponent piece
-          if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-            return Names.DEFAULT
+          if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+            return Terms.Moves.DEFAULT
           } 
         }
 //down
         if((y2-y1)<0){
 //check all cases before target
           for(let i=1;i<Math.abs(x2-x1);i++){
-            if(board[y1-i][x1+i].type!=Names.EMPTY){
-              return Names.ILLEGAL
+            if(board[y1-i][x1+i].type!=Terms.Pieces.EMPTY){
+              return Terms.Moves.ILLEGAL
             }
           }
 //checks if case is empty or if there is an opponent piece
-          if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-            return Names.DEFAULT
+          if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+            return Terms.Moves.DEFAULT
           }
         }
       }
@@ -540,31 +568,31 @@ class Bishop extends Piece{
         if((y2-y1)>0){
 //check all cases before target
           for(let i=1;i<Math.abs(x2-x1);i++){
-            if(board[y1+i][x1-i].type!=Names.EMPTY){
-              return Names.ILLEGAL
+            if(board[y1+i][x1-i].type!=Terms.Pieces.EMPTY){
+              return Terms.Moves.ILLEGAL
             }
           }
 //checks if case is empty or if there is an opponent piece
-          if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-            return Names.DEFAULT
+          if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+            return Terms.Moves.DEFAULT
           }
         }
 //down
         if((y2-y1)<0){
 //check all cases before target
           for(let i=1;i<Math.abs(x2-x1);i++){
-            if(board[y1-i][x1-i].type!=Names.EMPTY){
-              return Names.ILLEGAL
+            if(board[y1-i][x1-i].type!=Terms.Pieces.EMPTY){
+              return Terms.Moves.ILLEGAL
             }
           }
 //checks if case is empty or if there is an opponent piece
-          if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-            return Names.DEFAULT
+          if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+            return Terms.Moves.DEFAULT
           }
         }
       }
     }
-    return Names.ILLEGAL
+    return Terms.Moves.ILLEGAL
   }
 }
 
@@ -572,7 +600,7 @@ class Queen extends Piece{
   //constructor
     constructor(clr: string){
       super(clr)
-      this.type = Names.QUEEN
+      this.type = Terms.Pieces.QUEEN
       this.notation = "q"
     }
   // defining canMove method
@@ -584,26 +612,26 @@ class Queen extends Piece{
           if((y2-y1)>0){
 //check all cases before target
             for(let i=1;i<Math.abs(x2-x1);i++){
-              if(board[y1+i][x1+i].type!=Names.EMPTY){
-                return Names.ILLEGAL
+              if(board[y1+i][x1+i].type!=Terms.Pieces.EMPTY){
+                return Terms.Moves.ILLEGAL
               }
             }
 //checks if case is empty or if there is an opponent piece
-            if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-              return Names.DEFAULT
+            if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+              return Terms.Moves.DEFAULT
             }
           }
 //down
           if((y2-y1)<0){
 //check all cases before target
             for(let i=1;i<Math.abs(x2-x1);i++){
-              if(board[y1-i][x1+i].type!=Names.EMPTY){
-                return Names.ILLEGAL
+              if(board[y1-i][x1+i].type!=Terms.Pieces.EMPTY){
+                return Terms.Moves.ILLEGAL
               }
             }
 //checks if case is empty or if there is an opponent piece
-            if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-              return Names.DEFAULT
+            if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+              return Terms.Moves.DEFAULT
             }
           }
         }
@@ -615,26 +643,26 @@ class Queen extends Piece{
           if((y2-y1)>0){
 //check all cases before target
             for(let i=1;i<Math.abs(x2-x1);i++){
-              if(board[y1+i][x1-i].type!=Names.EMPTY){
-                return Names.ILLEGAL
+              if(board[y1+i][x1-i].type!=Terms.Pieces.EMPTY){
+                return Terms.Moves.ILLEGAL
               }
             }
 //checks if case is empty or if there is an opponent piece
-            if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-              return Names.DEFAULT
+            if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+              return Terms.Moves.DEFAULT
             }
           }
 //down
           if((y2-y1)<0){
 //check all cases before target
             for(let i=1;i<Math.abs(x2-x1);i++){
-              if(board[y1-i][x1-i].type!=Names.EMPTY){
-                return Names.ILLEGAL
+              if(board[y1-i][x1-i].type!=Terms.Pieces.EMPTY){
+                return Terms.Moves.ILLEGAL
               }
             }
 //checks if case is empty or if there is an opponent piece
-            if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-              return Names.DEFAULT
+            if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+              return Terms.Moves.DEFAULT
             }
           }
         }
@@ -646,26 +674,26 @@ class Queen extends Piece{
         if((y2-y1)>0){
 //check all cases before target
           for(let i=1;i<Math.abs(y2-y1);i++){
-            if(board[y1+i][x2].type!=Names.EMPTY){
-              return Names.ILLEGAL
+            if(board[y1+i][x2].type!=Terms.Pieces.EMPTY){
+              return Terms.Moves.ILLEGAL
             }
           }
 //checks if case is empty or if there is an opponent piece
-          if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-            return Names.DEFAULT
+          if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+            return Terms.Moves.DEFAULT
           }
         }
 //if negative
         if((y2-y1)<0){
 //check all cases before target
           for(let i=1;i<Math.abs(y2-y1);i++){
-            if(board[y1-i][x2].type!=Names.EMPTY){
-              return Names.ILLEGAL
+            if(board[y1-i][x2].type!=Terms.Pieces.EMPTY){
+              return Terms.Moves.ILLEGAL
             }
           }
 //checks if case is empty or if there is an opponent piece
-          if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-            return Names.DEFAULT
+          if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+            return Terms.Moves.DEFAULT
           }
         }
       }
@@ -676,30 +704,30 @@ class Queen extends Piece{
         if((x2-x1)>0){
 //check all cases before target
           for(let i=1;i<Math.abs(x2-x1);i++){
-            if(board[y2][x1+i].type!=Names.EMPTY){
-              return Names.ILLEGAL
+            if(board[y2][x1+i].type!=Terms.Pieces.EMPTY){
+              return Terms.Moves.ILLEGAL
             }
           }
 //checks if case is empty or if there is an opponent piece
-          if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-            return Names.DEFAULT
+          if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+            return Terms.Moves.DEFAULT
           }
         }
 //if negative
         if((x2-x1)<0){
 //check all cases before target
           for(let i=1;i<Math.abs(x2-x1);i++){
-            if(board[y2][x1-i].type!=Names.EMPTY){
-              return Names.ILLEGAL
+            if(board[y2][x1-i].type!=Terms.Pieces.EMPTY){
+              return Terms.Moves.ILLEGAL
             }
           }
 //checks if case is empty or if there is an opponent piece
-          if(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color){
-            return Names.DEFAULT
+          if(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color){
+            return Terms.Moves.DEFAULT
           }
         }
       }
-      return Names.ILLEGAL
+      return Terms.Moves.ILLEGAL
     }
 }
 
@@ -707,20 +735,20 @@ class King extends Piece{
 //constructor
     constructor(clr: string){
       super(clr)
-      this.type = Names.KING
+      this.type = Terms.Pieces.KING
       this.notation = "k"
       this.hasMoved = false
     }
 // defining canMove method
     canMove(x1:number, y1:number, x2: number, y2: number, board:Array<object>){
-      if((x2==x1+1 || x2==x1-1 || y2==y1+1 || y2==y1-1)&&(board[y2][x2].type==Names.EMPTY || board[y2][x2].color != this.color)&&Math.abs(x2-x1)<2&& Math.abs(y2-y1)<2){
-        return Names.DEFAULT
+      if((x2==x1+1 || x2==x1-1 || y2==y1+1 || y2==y1-1)&&(board[y2][x2].type==Terms.Pieces.EMPTY || board[y2][x2].color != this.color)&&Math.abs(x2-x1)<2&& Math.abs(y2-y1)<2){
+        return Terms.Moves.DEFAULT
       }
       if(this.color === 'white'){
 //check if trying to short castle
         if(y1 == 0 && x1 == 4 && y2 == 0 && x2 == 6){
 //check if all cases are empty and rook there
-          if(board[0][5].type==Names.EMPTY && board[0][6].type==Names.EMPTY && board[0][7].type=="rook"){
+          if(board[0][5].type==Terms.Pieces.EMPTY && board[0][6].type==Terms.Pieces.EMPTY && board[0][7].type=="rook"){
 //check if any of the pieces have moved
             if(!this.hasMoved && !board[0][7].hasMoved){
               return 'shortCastle'
@@ -730,7 +758,7 @@ class King extends Piece{
 //check if trying to long castle
       if(y1 == 0 && x1 == 4 && y2 == 0 && x2 == 2){
 //check if all cases are empty and rook there
-          if(board[0][3].type==Names.EMPTY && board[0][2].type==Names.EMPTY && board[0][1].type==Names.EMPTY && board[0][0].type=="rook"){
+          if(board[0][3].type==Terms.Pieces.EMPTY && board[0][2].type==Terms.Pieces.EMPTY && board[0][1].type==Terms.Pieces.EMPTY && board[0][0].type=="rook"){
 //check if any of the pieces have moved
             if(!this.hasMoved && !board[0][0].hasMoved){
               return 'longCastle'
@@ -742,7 +770,7 @@ class King extends Piece{
 //check if trying to short castle
         if(y1 == 7 && x1 == 4 && y2 == 7 && x2 == 6){
 //check if all cases are empty and rook there
-          if(board[7][5].type==Names.EMPTY && board[7][6].type==Names.EMPTY && board[7][7].type=="rook"){
+          if(board[7][5].type==Terms.Pieces.EMPTY && board[7][6].type==Terms.Pieces.EMPTY && board[7][7].type=="rook"){
 //check if any of the pieces have moved
             if(!this.hasMoved && !board[7][7].hasMoved){
               return 'shortCastle'
@@ -752,7 +780,7 @@ class King extends Piece{
 //check if trying to long castle
       if(y1 == 7 && x1 == 4 && y2 == 7 && x2 == 2){
 //check if all cases are empty and rook there
-          if(board[7][3].type==Names.EMPTY && board[7][2].type==Names.EMPTY && board[7][1].type==Names.EMPTY && board[7][0].type=="rook"){
+          if(board[7][3].type==Terms.Pieces.EMPTY && board[7][2].type==Terms.Pieces.EMPTY && board[7][1].type==Terms.Pieces.EMPTY && board[7][0].type=="rook"){
 //check if any of the pieces have moved
             if(!this.hasMoved && !board[7][0].hasMoved){
               return 'longCastle'
@@ -760,6 +788,6 @@ class King extends Piece{
           }
         }
       }
-      return Names.ILLEGAL
+      return Terms.Moves.ILLEGAL
     }
 }
