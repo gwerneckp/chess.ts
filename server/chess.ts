@@ -52,7 +52,7 @@ class Terms{
 export class Chess{
   history: Array<Array<object>>
   board: Array<object>;
-  turn: Array<string>
+  turn: number;
   constructor(){
     this.board = [
 [
@@ -136,7 +136,7 @@ export class Chess{
       new Rook(Terms.Colors.BLACK)
 ]
     ]
-    this.turn = [Terms.Colors.WHITE, Terms.Colors.BLACK]
+    this.turn = 1
     this.history = []
     this.history.push(cloneDeep(this.board))
   }
@@ -146,17 +146,17 @@ export class Chess{
 
 //checks if in checkmate
     if(this.inCheckmate(this.board, this.turn)){
-      return("Game Over! The "+this.turn[0]+" king is in checkmate!")
+      return("Game Over! The "+this.getTurn(this.turn)+" king is in checkmate!")
     }
 
 //checks if in stalamate
     if(this.inStalemate(this.board, this.turn)){
-      return("Stalemate, "+this.turn[0]+" has no legal Moves remaining, but is not in check. It's a draw!")
+      return("Stalemate, "+this.getTurn(this.turn)+" has no legal Moves remaining, but is not in check. It's a draw!")
     }
 
 //if piece you are trying to move isn't of the same color of current turn
-    if(this.board[y1][x1].color != this.turn[0]){
-      return("Cannot move a "+this.board[y1][x1].color+" piece on "+this.turn[0]+"'s turn.")
+    if(this.board[y1][x1].color != this.getTurn(this.turn)){
+      return("Cannot move a "+this.board[y1][x1].color+" piece on "+this.getTurn(this.turn)+"'s turn.")
     }
 //checks if piece can *NOT* move 
     let moveType:string = this.board[y1][x1].canMove(x1, y1, x2, y2, this.board)
@@ -171,22 +171,22 @@ export class Chess{
 
 //do this if didn't return till now
     this.board = this.changePieceLocation(this.board, x1, y1, x2, y2, moveType, promote)
-    this.turn = [this.turn[1], this.turn[0]]
+    this.turn += 1
     this.history.push(cloneDeep(this.board))
     return ("Moved "+pieceType+" from x:"+x1+" y:"+y1+" to x:"+x2+" y:"+y2)
   }
 
-  inCheck(board:Array<object>, turn:Array<string>):boolean{
+  inCheck(board:Array<object>, turn:number):boolean{
     let myKingPos:Array<number>
     let opponentPiecesPos:Array<Array<number>> = []
     for(let i in board){
       for(let j in board[i]){
 //check if piece is of the opponent's color and save its position in array
-        if(board[i][j].color == turn[1]){
+        if(board[i][j].color == this.getTurn(turn, true)){
           opponentPiecesPos.push([parseInt(i), parseInt(j)])
         }
 //check if piece is king of the current turn's color and save its position
-        if(board[i][j].type == Terms.Pieces.KING && board[i][j].color == turn[0]){
+        if(board[i][j].type == Terms.Pieces.KING && board[i][j].color == this.getTurn(turn)){
           myKingPos = [parseInt(i), parseInt(j)]
         }
       }
@@ -195,14 +195,14 @@ export class Chess{
     for(let i in opponentPiecesPos){
 //if piece can move to king's position, then king is in check
       if(board[opponentPiecesPos[i][0]][opponentPiecesPos[i][1]].canMove(opponentPiecesPos[i][1], opponentPiecesPos[i][0], myKingPos[1], myKingPos[0], board) !== Terms.Moves.ILLEGAL){
-        console.log("The "+turn[0]+"'s king is in check")
+        console.log("The "+this.getTurn(turn)+"'s king is in check")
         return true
       }
     }
     return false
   }
 
-  inCheckAfterMove(x1:number, y1:number, x2:number, y2:number, board:Array<object>, moveType:string, turn:Array<string>, promote?):boolean{
+  inCheckAfterMove(x1:number, y1:number, x2:number, y2:number, board:Array<object>, moveType:string, turn:number, promote?):boolean{
 //creates clone of board
     let newBoard:Array<object> = cloneDeep(board)
 //Moves piece in cloned board
@@ -269,14 +269,14 @@ export class Chess{
     }
   }
 
-  inCheckmate(board:Array<object>, turn:Array<string>):boolean{
+  inCheckmate(board:Array<object>, turn:number):boolean{
 //check if king is in check
     if(this.inCheck(board, turn)){
 //two nested loops to iterate throught all pieces in board
       for(let i in board){
         for(let j in board[i]){
 //if piece is of the same color of turn
-          if(board[i][j].color == turn[0]){
+          if(board[i][j].color == this.getTurn(turn)){
 //two nested loops to iterate throught all pieces in board
             for(let k in board){
               for(let l in board[k]){
@@ -296,13 +296,13 @@ export class Chess{
     return false
   }
 
-  inStalemate(board:Array<object>, turn:Array<string>){
+  inStalemate(board:Array<object>, turn:number){
 //check if king is NOT in check
     if(!this.inCheck(board, turn)){
 //two nested loops to iterate throught all pieces in board
       for(let i in board){
         for(let j in board[i]){
-          if(board[i][j].color == turn[0]){
+          if(board[i][j].color == this.getTurn(turn)){
 //two nested loops to iterate throught all pieces in board
             for(let k in board){
               for(let l in board[i]){
@@ -320,6 +320,19 @@ export class Chess{
       return true
     }
     return false
+  }
+
+  getTurn(turn: number, opponent: boolean = false){
+    // if (turn % 2 == 1)
+    if(opponent){
+      turn = turn + 1
+    }
+
+    if(turn % 2){
+      return Terms.Colors.WHITE
+    } else {
+      return Terms.Colors.BLACK
+    }
   }
 }
 

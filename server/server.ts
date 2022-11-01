@@ -51,12 +51,12 @@ function removeAndReassign(socket: Socket):string{
 }
 
 function rightTurn(socket):boolean{
-    if(game.turn[0] == "white"){
+    if(game.getTurn(game.turn) == "white"){
         if(socket.id == players.whitePlayer){
             return true
         }
     }
-    if(game.turn[0] == "black"){
+    if(game.getTurn(game.turn) == "black"){
         if(socket.id == players.blackPlayer){
             return true
         }
