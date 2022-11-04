@@ -5,12 +5,19 @@ let sessionId;
 socket.on('connect', function () {
     sessionId = socket.id;
 });
+class Terms {
+}
+Terms.Roles = {
+    WHITE: "white",
+    BLACK: "black",
+    SPECTATOR: "spectator"
+};
 const getTurn = (turn) => {
     if (turn % 2) {
-        return 'white';
+        return Terms.Roles.WHITE;
     }
     else {
-        return 'black';
+        return Terms.Roles.BLACK;
     }
 };
 function showBoardWhite(board) {
@@ -21,18 +28,18 @@ function showBoardWhite(board) {
             let color;
             if (i % 2 == 0) {
                 if (j % 2 == 0) {
-                    color = "white";
+                    color = Terms.Roles.WHITE;
                 }
                 if (j % 2 != 0) {
-                    color = "black";
+                    color = Terms.Roles.BLACK;
                 }
             }
             if (i % 2 != 0) {
                 if (j % 2 != 0) {
-                    color = "white";
+                    color = Terms.Roles.WHITE;
                 }
                 if (j % 2 == 0) {
-                    color = "black";
+                    color = Terms.Roles.BLACK;
                 }
             }
             document.getElementById("l" + i).innerHTML += "<td class='square " + color + "' data-x=" + j + " data-y=" + i + " id='l" + i + "p" + j + "'></td>";
@@ -48,18 +55,18 @@ function showBoardBlack(board) {
             let color;
             if (i % 2 == 0) {
                 if (j % 2 == 0) {
-                    color = "white";
+                    color = Terms.Roles.WHITE;
                 }
                 if (j % 2 != 0) {
-                    color = "black";
+                    color = Terms.Roles.BLACK;
                 }
             }
             if (i % 2 != 0) {
                 if (j % 2 != 0) {
-                    color = "white";
+                    color = Terms.Roles.WHITE;
                 }
                 if (j % 2 == 0) {
-                    color = "black";
+                    color = Terms.Roles.BLACK;
                 }
             }
             document.getElementById("l" + i).innerHTML += "<td class='square " + color + "' data-x=" + j + " data-y=" + i + " id='l" + i + "p" + j + "'></td>";
@@ -122,7 +129,6 @@ function getClickListenerReady(board, role) {
     }
 }
 function showBoard(players, chess) {
-    // TODO: this is a mess, clean it up
     if (sessionId == players.whitePlayer) {
         showBoardWhite(chess.board);
         return;
@@ -131,6 +137,7 @@ function showBoard(players, chess) {
         showBoardBlack(chess.board);
         return;
     }
+    // This will run if user is spectator
     if (getTurn(chess.turn) == "white") {
         showBoardWhite(chess.board);
         return;
