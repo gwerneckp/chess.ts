@@ -25,6 +25,9 @@ Terms.Moves = {
     ILLEGAL: 'illegal',
     PROMOTION: 'promotion',
     PASSANT: 'passant',
+    PAWN_DOUBLE: 'pawnDouble',
+    SHORT_CASTLE: 'shortCastle',
+    LONG_CASTLE: 'longCastle'
 };
 class Chess {
     constructor() {
@@ -117,16 +120,16 @@ class Chess {
     move(x1, y1, x2, y2, promote) {
         const pieceType = this.board[y1][x1].type;
         //checks if in checkmate
-        if (this.inCheckmate(this.board, this.turn)) {
-            return ("Game Over! The " + this.getTurn(this.turn) + " king is in checkmate!");
+        if (Chess.inCheckmate(this.board, this.turn)) {
+            return ("Game Over! The " + Chess.getTurn(this.turn) + " king is in checkmate!");
         }
         //checks if in stalamate
-        if (this.inStalemate(this.board, this.turn)) {
-            return ("Stalemate, " + this.getTurn(this.turn) + " has no legal Moves remaining, but is not in check. It's a draw!");
+        if (Chess.inStalemate(this.board, this.turn)) {
+            return ("Stalemate, " + Chess.getTurn(this.turn) + " has no legal Moves remaining, but is not in check. It's a draw!");
         }
         //if piece you are trying to move isn't of the same color of current turn
-        if (this.board[y1][x1].color != this.getTurn(this.turn)) {
-            return ("Cannot move a " + this.board[y1][x1].color + " piece on " + this.getTurn(this.turn) + "'s turn.");
+        if (this.board[y1][x1].color != Chess.getTurn(this.turn)) {
+            return ("Cannot move a " + this.board[y1][x1].color + " piece on " + Chess.getTurn(this.turn) + "'s turn.");
         }
         //checks if piece can *NOT* move 
         let moveType = this.board[y1][x1].canMove(x1, y1, x2, y2, this.board);
@@ -134,26 +137,26 @@ class Chess {
             return ("Cannot move piece on x: " + x1 + " y: " + y1 + " to x: " + x2 + " y: " + y2);
         }
         //check if move is outting yourself in check
-        if (this.inCheckAfterMove(x1, y1, x2, y2, this.board, moveType, this.turn, promote)) {
+        if (Chess.inCheckAfterMove(x1, y1, x2, y2, this.board, moveType, this.turn, promote)) {
             return ("Moving piece on x: " + x1 + " y: " + y1 + " to x: " + x2 + " y: " + y2 + " leaves king in check!");
         }
         //do this if didn't return till now
-        this.board = this.changePieceLocation(this.board, x1, y1, x2, y2, moveType, promote);
+        this.board = Chess.changePieceLocation(this.board, x1, y1, x2, y2, moveType, promote);
         this.turn += 1;
         this.history.push((0, lodash_1.cloneDeep)(this.board));
         return ("Moved " + pieceType + " from x:" + x1 + " y:" + y1 + " to x:" + x2 + " y:" + y2);
     }
-    inCheck(board, turn) {
+    static inCheck(board, turn) {
         let myKingPos;
         let opponentPiecesPos = [];
         for (let i in board) {
             for (let j in board[i]) {
                 //check if piece is of the opponent's color and save its position in array
-                if (board[i][j].color == this.getTurn(turn, true)) {
+                if (board[i][j].color == Chess.getTurn(turn, true)) {
                     opponentPiecesPos.push([parseInt(i), parseInt(j)]);
                 }
                 //check if piece is king of the current turn's color and save its position
-                if (board[i][j].type == Terms.Pieces.KING && board[i][j].color == this.getTurn(turn)) {
+                if (board[i][j].type == Terms.Pieces.KING && board[i][j].color == Chess.getTurn(turn)) {
                     myKingPos = [parseInt(i), parseInt(j)];
                 }
             }
@@ -167,47 +170,72 @@ class Chess {
         }
         return false;
     }
-    inCheckAfterMove(x1, y1, x2, y2, board, moveType, turn, promote) {
+    static inCheckAfterMove(x1, y1, x2, y2, board, moveType, turn, promote) {
         //creates clone of board
         let newBoard = (0, lodash_1.cloneDeep)(board);
         //Moves piece in cloned board
-        newBoard = this.changePieceLocation(newBoard, x1, y1, x2, y2, moveType, promote);
+        newBoard = Chess.changePieceLocation(newBoard, x1, y1, x2, y2, moveType, promote);
         //if move puts king on check, return true
-        if (this.inCheck(newBoard, turn)) {
+        if (Chess.inCheck(newBoard, turn)) {
             return true;
         }
         return false;
     }
-    changePieceLocation(board, x1, y1, x2, y2, moveType, promote) {
+    static changePieceLocation(board, x1, y1, x2, y2, moveType, promote) {
         if (moveType === Terms.Moves.DEFAULT) {
             board[y1][x1].changeHasMoved();
             board[y2][x2] = board[y1][x1];
             board[y1][x1] = new Empty;
+            const enPassant = Chess.whereEnPassant(board);
+            if (enPassant) {
+                board[enPassant.y][enPassant.x].allowPassant(false);
+            }
             return board;
         }
-        if (moveType === 'shortCastle') {
+        if (moveType === Terms.Moves.SHORT_CASTLE) {
             board[y1][x1].changeHasMoved();
             board[y1][7].changeHasMoved();
             board[y2][x2] = board[y1][x1];
             board[y1][x1] = new Empty;
             board[y1][5] = board[y1][7];
             board[y1][7] = new Empty;
+            const enPassant = Chess.whereEnPassant(board);
+            if (enPassant) {
+                board[enPassant.y][enPassant.x].allowPassant(false);
+            }
             return board;
         }
-        if (moveType === 'longCastle') {
+        if (moveType === Terms.Moves.LONG_CASTLE) {
             board[y1][x1].changeHasMoved();
             board[y1][0].changeHasMoved();
             board[y2][x2] = board[y1][x1];
             board[y1][x1] = new Empty;
             board[y1][3] = board[y1][0];
             board[y1][0] = new Empty;
+            const enPassant = Chess.whereEnPassant(board);
+            if (enPassant) {
+                board[enPassant.y][enPassant.x].allowPassant(false);
+            }
+            return board;
+        }
+        if (moveType === Terms.Moves.PAWN_DOUBLE) {
+            board[y1][x1].changeHasMoved();
+            board[y2][x2] = board[y1][x1];
+            board[y1][x1] = new Empty;
+            const enPassant = Chess.whereEnPassant(board);
+            if (enPassant) {
+                board[enPassant.y][enPassant.x].allowPassant(false);
+            }
+            board[y2][x2].allowPassant(true);
             return board;
         }
         if (moveType === Terms.Moves.PASSANT) {
-            //do stuff
+            board[y2][x2] = board[y1][x1];
+            board[y1][x1] = new Empty;
+            board[y1][x2] = new Empty;
+            return board;
         }
         if (moveType === Terms.Moves.PROMOTION) {
-            board[y1][x1].changeHasMoved();
             switch (promote) {
                 case undefined:
                     board[y2][x2] = new Queen(board[y1][x1].color);
@@ -229,23 +257,27 @@ class Chess {
                     break;
             }
             board[y1][x1] = new Empty;
+            const enPassant = Chess.whereEnPassant(board);
+            if (enPassant) {
+                board[enPassant.y][enPassant.x].allowPassant(false);
+            }
             return board;
         }
     }
-    inCheckmate(board, turn) {
+    static inCheckmate(board, turn) {
         //check if king is in check
-        if (this.inCheck(board, turn)) {
+        if (Chess.inCheck(board, turn)) {
             //two nested loops to iterate throught all pieces in board
             for (let i in board) {
                 for (let j in board[i]) {
                     //if piece is of the same color of turn
-                    if (board[i][j].color == this.getTurn(turn)) {
+                    if (board[i][j].color == Chess.getTurn(turn)) {
                         //two nested loops to iterate throught all pieces in board
                         for (let k in board) {
                             for (let l in board[k]) {
                                 //checks if any  move can take king out of check
                                 let canMove = board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board);
-                                if (canMove !== Terms.Moves.ILLEGAL && !this.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, canMove, turn)) {
+                                if (canMove !== Terms.Moves.ILLEGAL && !Chess.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, canMove, turn)) {
                                     console.log("Moving piece on x: " + j + " y: " + i + " to x: " + l + " y: " + k + " takes king out of check!");
                                     return false;
                                 }
@@ -258,19 +290,19 @@ class Chess {
         }
         return false;
     }
-    inStalemate(board, turn) {
+    static inStalemate(board, turn) {
         //check if king is NOT in check
-        if (!this.inCheck(board, turn)) {
+        if (!Chess.inCheck(board, turn)) {
             //two nested loops to iterate throught all pieces in board
             for (let i in board) {
                 for (let j in board[i]) {
-                    if (board[i][j].color == this.getTurn(turn)) {
+                    if (board[i][j].color == Chess.getTurn(turn)) {
                         //two nested loops to iterate throught all pieces in board
                         for (let k in board) {
                             for (let l in board[i]) {
                                 //checks if piece can move and if king is not in check after move
                                 let canMove = board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board);
-                                if (board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board) !== Terms.Moves.ILLEGAL && !this.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, canMove, turn)) {
+                                if (board[i][j].canMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board) !== Terms.Moves.ILLEGAL && !Chess.inCheckAfterMove(parseInt(j), parseInt(i), parseInt(l), parseInt(k), board, canMove, turn)) {
                                     console.log("Moving piece on x: " + j + " y: " + i + " to x: " + l + " y: " + k + " is possible!");
                                     return false;
                                 }
@@ -283,7 +315,7 @@ class Chess {
         }
         return false;
     }
-    getTurn(turn, opponent = false) {
+    static getTurn(turn, opponent = false) {
         // if (turn % 2 == 1)
         if (opponent) {
             turn = turn + 1;
@@ -295,6 +327,16 @@ class Chess {
             return Terms.Colors.BLACK;
         }
     }
+    static whereEnPassant(board) {
+        for (let y in board) {
+            for (let x in board[y]) {
+                if (board[y][x].canBeTakenEnPassant) {
+                    return { x: parseInt(x), y: parseInt(y) };
+                }
+            }
+        }
+        return null;
+    }
 }
 exports.Chess = Chess;
 class Piece {
@@ -303,9 +345,12 @@ class Piece {
         this.color = clr;
         this.hasMoved = false;
     }
-    //set hasMoved to true
+    //set hasMoved to true 
     changeHasMoved() {
         this.hasMoved = true;
+    }
+    allowPassant(isAllowed) {
+        return;
     }
 }
 class Empty {
@@ -324,6 +369,9 @@ class Pawn extends Piece {
         this.notation = "p";
         this.canBeTakenEnPassant = false;
     }
+    allowPassant(isAllowed) {
+        this.canBeTakenEnPassant = isAllowed;
+    }
     // defining canMove method
     canMove(x1, y1, x2, y2, board) {
         //for white
@@ -339,16 +387,21 @@ class Pawn extends Piece {
                 }
                 //moving 2 forwards
                 if (y1 == 1 && y2 == 3 && board[2][x2].type == Terms.Pieces.EMPTY) {
-                    return Terms.Moves.DEFAULT;
+                    return Terms.Moves.PAWN_DOUBLE;
                 }
             }
             //eating diagonally
-            if ((x2 == x1 + 1 || x2 == x1 - 1) && y2 == y1 + 1 && board[y2][x2].type != Terms.Pieces.EMPTY) {
-                if (board[y2][x2].color != Terms.Colors.WHITE) {
+            if ((x2 == x1 + 1 || x2 == x1 - 1) && y2 == y1 + 1) {
+                // regular eating
+                if (board[y2][x2].color != Terms.Colors.WHITE && board[y2][x2].type != Terms.Pieces.EMPTY) {
                     if (y2 == 7) {
                         return Terms.Moves.PROMOTION;
                     }
                     return Terms.Moves.DEFAULT;
+                }
+                // en passant
+                if (board[y2][x2].type == Terms.Pieces.EMPTY && board[y1][x2].type == Terms.Pieces.PAWN && board[y1][x2].canBeTakenEnPassant && y1 == 4) {
+                    return Terms.Moves.PASSANT;
                 }
             }
         }
@@ -365,16 +418,21 @@ class Pawn extends Piece {
                 }
                 //moving 2 forward
                 if (y1 == 6 && y2 == 4 && board[5][x2].type == Terms.Pieces.EMPTY) {
-                    return Terms.Moves.DEFAULT;
+                    return Terms.Moves.PAWN_DOUBLE;
                 }
             }
             //eating diagonally
-            if ((x2 == x1 + 1 || x2 == x1 - 1) && y2 == y1 - 1 && board[y2][x2].type != Terms.Pieces.EMPTY) {
-                if (board[y2][x2].color != Terms.Colors.BLACK) {
+            if ((x2 == x1 + 1 || x2 == x1 - 1) && y2 == y1 - 1) {
+                // regular eating
+                if (board[y2][x2].type != Terms.Pieces.EMPTY && board[y2][x2].color != Terms.Colors.BLACK) {
                     if (y2 == 0) {
                         return Terms.Moves.PROMOTION;
                     }
                     return Terms.Moves.DEFAULT;
+                }
+                // en passant
+                if (board[y2][x2].type == Terms.Pieces.EMPTY && board[y1][x2].type == Terms.Pieces.PAWN && board[y1][x2].canBeTakenEnPassant && y1 == 3) {
+                    return Terms.Moves.PASSANT;
                 }
             }
         }
@@ -696,7 +754,7 @@ class King extends Piece {
                 if (board[0][5].type == Terms.Pieces.EMPTY && board[0][6].type == Terms.Pieces.EMPTY && board[0][7].type == "rook") {
                     //check if any of the pieces have moved
                     if (!this.hasMoved && !board[0][7].hasMoved) {
-                        return 'shortCastle';
+                        return Terms.Moves.SHORT_CASTLE;
                     }
                 }
             }
@@ -706,7 +764,7 @@ class King extends Piece {
                 if (board[0][3].type == Terms.Pieces.EMPTY && board[0][2].type == Terms.Pieces.EMPTY && board[0][1].type == Terms.Pieces.EMPTY && board[0][0].type == "rook") {
                     //check if any of the pieces have moved
                     if (!this.hasMoved && !board[0][0].hasMoved) {
-                        return 'longCastle';
+                        return Terms.Moves.LONG_CASTLE;
                     }
                 }
             }
@@ -718,7 +776,7 @@ class King extends Piece {
                 if (board[7][5].type == Terms.Pieces.EMPTY && board[7][6].type == Terms.Pieces.EMPTY && board[7][7].type == "rook") {
                     //check if any of the pieces have moved
                     if (!this.hasMoved && !board[7][7].hasMoved) {
-                        return 'shortCastle';
+                        return Terms.Moves.SHORT_CASTLE;
                     }
                 }
             }
@@ -728,7 +786,7 @@ class King extends Piece {
                 if (board[7][3].type == Terms.Pieces.EMPTY && board[7][2].type == Terms.Pieces.EMPTY && board[7][1].type == Terms.Pieces.EMPTY && board[7][0].type == "rook") {
                     //check if any of the pieces have moved
                     if (!this.hasMoved && !board[7][0].hasMoved) {
-                        return 'longCastle';
+                        return Terms.Moves.LONG_CASTLE;
                     }
                 }
             }

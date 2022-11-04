@@ -47,12 +47,12 @@ function removeAndReassign(socket) {
     }
 }
 function rightTurn(socket) {
-    if (game.getTurn(game.turn) == "white") {
+    if (chess_1.Chess.getTurn(game.turn) == "white") {
         if (socket.id == players.whitePlayer) {
             return true;
         }
     }
-    if (game.getTurn(game.turn) == "black") {
+    if (chess_1.Chess.getTurn(game.turn) == "black") {
         if (socket.id == players.blackPlayer) {
             return true;
         }
