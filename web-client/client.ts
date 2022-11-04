@@ -1,4 +1,5 @@
 //client.js
+
 //@ts-ignore
 var socket = io.connect('localhost:3000', { transports: ['websocket', 'polling', 'flashsocket'] }, {reconnection: true})
 let sessionId:string
@@ -6,7 +7,15 @@ socket.on('connect', function(){
      sessionId = socket.id
 })
 
-function showBoardWhite(board):void{
+const getTurn = (turn:number): string => {
+    if(turn % 2){
+        return 'white'
+    } else {
+        return 'black'
+    }
+}
+
+function showBoardWhite(board: Array<any>):void{
     document.getElementById("board-gui").innerHTML = ""
     for(let i=board.length-1;i>-1;i--){ 
       document.getElementById("board-gui").innerHTML += "<tr data-line='"+i+"' id='l"+i+"'></tr>"
@@ -118,6 +127,7 @@ function getClickListenerReady(board, role):void{
 }
 
 function showBoard(players, chess):void{
+    // TODO: this is a mess, clean it up
     if(sessionId == players.whitePlayer){
         showBoardWhite(chess.board)
         return 
@@ -126,11 +136,11 @@ function showBoard(players, chess):void{
         showBoardBlack(chess.board)
         return 
     }
-    if(chess.turn[0] == "white"){
+    if(getTurn(chess.turn) == "white"){
         showBoardWhite(chess.board)
         return
     }
-    if(chess.turn[0] == "black"){
+    if(getTurn(chess.turn) == "black"){
         showBoardBlack(chess.board)
         return
     }
@@ -139,22 +149,22 @@ function showBoard(players, chess):void{
 function showRole(players, chess):string{
     let roleDiv:string = document.getElementById("role").innerHTML
     if(sessionId == players.whitePlayer){
-        if(chess.turn[0] == "white"){
+        if(getTurn(chess.turn) == "white"){
             document.getElementById("role").innerHTML = "<h1 style='color: ffffff;'>Your turn!"
             return "white"
         }
-        if(chess.turn[0] == "black"){
+        if(getTurn(chess.turn) == "black"){
             document.getElementById("role").innerHTML = "<h1 style='color: 000000;'>Opponent's turn. Wait!"
             return "white"
         }
     }
 
     if(sessionId == players.blackPlayer){
-        if(chess.turn[0] == "white"){
+        if(getTurn(chess.turn) == "white"){
             document.getElementById("role").innerHTML = "<h1 style='color: 000000;'>Opponent's turn. Wait!"
             return "black"
         }
-        if(chess.turn[0] == "black"){
+        if(getTurn(chess.turn) == "black"){
             document.getElementById("role").innerHTML = "<h1 style='color: ffffff;'>Your turn!"
             return "black"
         }
@@ -171,6 +181,7 @@ function showRole(players, chess):string{
 
 socket.on("game", function (players, chess) {
     showBoard(players, chess)
+    console.log(Object.keys(chess))
     let role = showRole(players, chess)
     getClickListenerReady(chess.board, role)
 });

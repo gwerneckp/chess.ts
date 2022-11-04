@@ -5,6 +5,14 @@ let sessionId;
 socket.on('connect', function () {
     sessionId = socket.id;
 });
+const getTurn = (turn) => {
+    if (turn % 2) {
+        return 'white';
+    }
+    else {
+        return 'black';
+    }
+};
 function showBoardWhite(board) {
     document.getElementById("board-gui").innerHTML = "";
     for (let i = board.length - 1; i > -1; i--) {
@@ -114,6 +122,7 @@ function getClickListenerReady(board, role) {
     }
 }
 function showBoard(players, chess) {
+    // TODO: this is a mess, clean it up
     if (sessionId == players.whitePlayer) {
         showBoardWhite(chess.board);
         return;
@@ -122,11 +131,11 @@ function showBoard(players, chess) {
         showBoardBlack(chess.board);
         return;
     }
-    if (chess.turn[0] == "white") {
+    if (getTurn(chess.turn) == "white") {
         showBoardWhite(chess.board);
         return;
     }
-    if (chess.turn[0] == "black") {
+    if (getTurn(chess.turn) == "black") {
         showBoardBlack(chess.board);
         return;
     }
@@ -134,21 +143,21 @@ function showBoard(players, chess) {
 function showRole(players, chess) {
     let roleDiv = document.getElementById("role").innerHTML;
     if (sessionId == players.whitePlayer) {
-        if (chess.turn[0] == "white") {
+        if (getTurn(chess.turn) == "white") {
             document.getElementById("role").innerHTML = "<h1 style='color: ffffff;'>Your turn!";
             return "white";
         }
-        if (chess.turn[0] == "black") {
+        if (getTurn(chess.turn) == "black") {
             document.getElementById("role").innerHTML = "<h1 style='color: 000000;'>Opponent's turn. Wait!";
             return "white";
         }
     }
     if (sessionId == players.blackPlayer) {
-        if (chess.turn[0] == "white") {
+        if (getTurn(chess.turn) == "white") {
             document.getElementById("role").innerHTML = "<h1 style='color: 000000;'>Opponent's turn. Wait!";
             return "black";
         }
-        if (chess.turn[0] == "black") {
+        if (getTurn(chess.turn) == "black") {
             document.getElementById("role").innerHTML = "<h1 style='color: ffffff;'>Your turn!";
             return "black";
         }
@@ -162,6 +171,7 @@ function showRole(players, chess) {
 }
 socket.on("game", function (players, chess) {
     showBoard(players, chess);
+    console.log(Object.keys(chess));
     let role = showRole(players, chess);
     getClickListenerReady(chess.board, role);
 });
